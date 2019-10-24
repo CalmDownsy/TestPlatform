@@ -23,6 +23,13 @@
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
 
+        <!--testng-->
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>6.10</version>
+        </dependency>
+
         <!-- 通用工具-->
         <dependency>
             <groupId>com.ruoyi</groupId>

@@ -1,16 +1,109 @@
 <!DOCTYPE html>
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head>
-    <th:block th:include="include :: header('用例列表')" />
+    <th:block th:include="include :: header('测试用例列表')" />
 </head>
 <body class="gray-bg">
-<div class="container-div">
-    <!-- todo -->
-    <h1 style="color: red">TO DO!!!</h1>
-</div>
-<th:block th:include="include :: footer" />
-<script th:inline="javascript">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <p>用例父标题：</p>
+                                <input type="text" name="parentTitle"/>
+                            </li>
+                            <li>
+                                <p>用例标题：</p>
+                                <input type="text" name="testCaseTitle"/>
+                            </li>
+                            <li>
+                                <p>用例类型：</p>
+                                <select name="testCaseType" th:with="type=${@dict.getType('test_testcase_type')}">
+                                    <option value="">请选择</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
 
-</script>
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="test:testcase:add">
+                    <i class="fa fa-plus"></i> 添加
+                </a>
+                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="test:testcase:edit">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="test:testcase:remove">
+                    <i class="fa fa-remove"></i> 删除
+                </a>
+                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="test:testcase:export">
+                    <i class="fa fa-download"></i> 导出
+                 </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table" data-mobile-responsive="true"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('test:testcase:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('test:testcase:remove')}]];
+        var prefix = ctx + "test/testcase";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                modalName: "测试用例",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field : 'testCaseId', 
+                    title : 'null',
+                    visible: false
+                },
+                {
+                    field : 'parentTitle', 
+                    title : '用例父标题'
+                },
+                {
+                    field : 'testCaseTitle', 
+                    title : '用例标题'
+                },
+                {
+                    field : 'description', 
+                    title : '用例描述'
+                },
+                {
+                    field : 'testCaseType', 
+                    title : '用例类型'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.testCaseId + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.testCaseId + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+    </script>
 </body>
 </html>

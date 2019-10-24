@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.test.mapper.TestcaseMapper">
+    
+    <resultMap type="com.ruoyi.test.domain.Testcase" id="TestcaseResult">
+        <result property="testCaseId"    column="test_case_id"    />
+        <result property="parentTitle"    column="parent_title"    />
+        <result property="testCaseTitle"    column="test_case_title"    />
+        <result property="description"    column="description"    />
+        <result property="testCaseType"    column="test_case_type"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectTestcaseVo">
+        select test_case_id, parent_title, test_case_title, description, test_case_type, create_by, create_time, update_by, update_time from testcase
+    </sql>
+
+    <select id="selectTestcaseList" parameterType="com.ruoyi.test.domain.Testcase" resultMap="TestcaseResult">
+        <include refid="selectTestcaseVo"/>
+        <where>  
+            <if test="parentTitle != null  and parentTitle != ''"> and parent_title = #{parentTitle}</if>
+            <if test="testCaseTitle != null  and testCaseTitle != ''"> and test_case_title = #{testCaseTitle}</if>
+            <if test="description != null  and description != ''"> and description = #{description}</if>
+            <if test="testCaseType != null  and testCaseType != ''"> and test_case_type = #{testCaseType}</if>
+        </where>
+    </select>
+    
+    <select id="selectTestcaseById" parameterType="Long" resultMap="TestcaseResult">
+        <include refid="selectTestcaseVo"/>
+        where test_case_id = #{testCaseId}
+    </select>
+        
+    <insert id="insertTestcase" parameterType="com.ruoyi.test.domain.Testcase" useGeneratedKeys="true" keyProperty="testCaseId">
+        insert into testcase
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="parentTitle != null  and parentTitle != ''">parent_title,</if>
+            <if test="testCaseTitle != null  and testCaseTitle != ''">test_case_title,</if>
+            <if test="description != null  and description != ''">description,</if>
+            <if test="testCaseType != null  and testCaseType != ''">test_case_type,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="parentTitle != null  and parentTitle != ''">#{parentTitle},</if>
+            <if test="testCaseTitle != null  and testCaseTitle != ''">#{testCaseTitle},</if>
+            <if test="description != null  and description != ''">#{description},</if>
+            <if test="testCaseType != null  and testCaseType != ''">#{testCaseType},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTestcase" parameterType="com.ruoyi.test.domain.Testcase">
+        update testcase
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="parentTitle != null  and parentTitle != ''">parent_title = #{parentTitle},</if>
+            <if test="testCaseTitle != null  and testCaseTitle != ''">test_case_title = #{testCaseTitle},</if>
+            <if test="description != null  and description != ''">description = #{description},</if>
+            <if test="testCaseType != null  and testCaseType != ''">test_case_type = #{testCaseType},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+        </trim>
+        where test_case_id = #{testCaseId}
+    </update>
+
+    <delete id="deleteTestcaseById" parameterType="Long">
+        delete from testcase where test_case_id = #{testCaseId}
+    </delete>
+
+    <delete id="deleteTestcaseByIds" parameterType="String">
+        delete from testcase where test_case_id in 
+        <foreach item="testCaseId" collection="array" open="(" separator="," close=")">
+            #{testCaseId}
+        </foreach>
+    </delete>
+    
+</mapper>
