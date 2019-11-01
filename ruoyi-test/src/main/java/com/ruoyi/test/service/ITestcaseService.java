@@ -65,4 +65,10 @@ public interface ITestcaseService
      * @return
      */
     public List<Testcase> scanTestcases();
+
+    /**
+     * 执行测试用例
+     * @param testcaseList
+     */
+    public void runCase(List<Testcase> testcaseList);
 }

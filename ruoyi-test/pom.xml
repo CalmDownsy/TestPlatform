@@ -27,13 +27,26 @@
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <version>6.10</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.aventstack</groupId>
+            <artifactId>extentreports</artifactId>
+            <version>3.0.6</version>
         </dependency>
 
         <!-- 通用工具-->
         <dependency>
             <groupId>com.ruoyi</groupId>
             <artifactId>ruoyi-common</artifactId>
+        </dependency>
+
+        <!-- 引此包的目的是为了反射能够加载该模块下的类-->
+        <dependency>
+            <groupId>com.ruoyi</groupId>
+            <artifactId>autotest</artifactId>
+            <!-- 没有在父模块中引入，此处需要版本号 -->
+            <version>4.0.0</version>
         </dependency>
 
     </dependencies>

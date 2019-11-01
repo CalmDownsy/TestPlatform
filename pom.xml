@@ -9,7 +9,6 @@
     <version>4.0.0</version>
 
     <name>ruoyi</name>
-    <url>http://www.ruoyi.vip</url>
     <description>测试管理系统</description>
 
     <properties>
@@ -32,6 +31,7 @@
         <jsoup.version>1.11.3</jsoup.version>
         <poi.version>3.17</poi.version>
         <velocity.version>1.7</velocity.version>
+        <testng.version>6.11</testng.version>
     </properties>
 
     <!-- 依赖声明 -->
@@ -176,6 +176,13 @@
                 <version>${fastjson.version}</version>
             </dependency>
 
+            <!--testng-->
+            <dependency>
+                <groupId>org.testng</groupId>
+                <artifactId>testng</artifactId>
+                <version>${testng.version}</version>
+            </dependency>
+
             <!-- 定时任务-->
             <dependency>
                 <groupId>com.ruoyi</groupId>
@@ -229,6 +236,7 @@
         <module>ruoyi-generator</module>
         <module>ruoyi-common</module>
         <module>ruoyi-test</module>
+        <module>autotest</module>
     </modules>
     <packaging>pom</packaging>
 

@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>ruoyi</artifactId>
+        <groupId>com.ruoyi</groupId>
+        <version>4.0.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>autotest</artifactId>
+
+    <description>
+        autotest自动化测试脚本模块
+    </description>
+    <properties>
+        <!-- 报告相关 -->
+        <aspectj.version>1.8.9</aspectj.version>
+        <!-- 指明编译源代码时使用的字符编码，maven编译的时候默认使用的GBK编码， 通过project.build.sourceEncoding属性设置字符编码，告诉maven这个项目使用UTF-8来编译 -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+    <dependencies>
+
+        <!--testng-->
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+        </dependency>
+
+        <!-- 通用工具-->
+        <dependency>
+            <groupId>com.ruoyi</groupId>
+            <artifactId>ruoyi-common</artifactId>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.mockito/mockito-core -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- 自动化测试相关项目jar包 -->
+        <dependency>
+            <groupId>com.ulpay.bankroute</groupId>
+            <artifactId>ulpay-bankroute-vo</artifactId>
+            <version>PJ2018012302</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ulpay</groupId>
+            <artifactId>merc-payoutservice-facade</artifactId>
+            <version>PJ2018012001</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ulpay</groupId>
+            <artifactId>merc-service-facade</artifactId>
+            <version>PJ2019060501</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ulpay</groupId>
+            <artifactId>basecmm-mercservice-facade</artifactId>
+            <version>PJ2017080303</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ulpay.account</groupId>
+            <artifactId>ulpay-account-vo</artifactId>
+            <version>PJ2017111402</version>
+        </dependency>
+        <!-- 以上部分为 自动化测试相关项目jar包  -->
+        <dependency>
+            <groupId>net.sf.json-lib</groupId>
+            <artifactId>json-lib</artifactId>
+            <version>2.4</version>
+            <classifier>jdk15</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+        </dependency>
+        <!-- 加签加压相关jar包 -->
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcmail-jdk15</artifactId>
+            <version>1.45</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk15</artifactId>
+            <version>1.45</version>
+        </dependency>
+        <!-- 加密机使用jar包 -->
+        <dependency>
+            <groupId>ulpay-security-center</groupId>
+            <artifactId>ulpay-security-center-engine</artifactId>
+            <version>1.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.2</version>
+        </dependency>
+        <!-- hessian jar -->
+        <dependency>
+            <groupId>com.caucho</groupId>
+            <artifactId>hessian</artifactId>
+            <version>4.0.38</version>
+        </dependency>
+        <!-- logback+slf4j -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+        </dependency>
+
+        <!-- 导入数据库链接jar包 -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>ojdbc16</artifactId>
+            <version>11.2.0.1.0</version>
+        </dependency>
+        <!-- XML转换使用jar -->
+        <dependency>
+            <groupId>org.dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+            <version>2.0.0</version>
+        </dependency>
+        <!-- 私有jar -->
+        <dependency>
+            <groupId>com.itrus</groupId>
+            <artifactId>iTrusCertAPI_jdk15</artifactId>
+            <version>2.9.2</version>
+        </dependency>
+        <!-- redis相关 -->
+        <dependency>
+            <groupId>com.ulpay</groupId>
+            <artifactId>ulpay-cache-client</artifactId>
+            <version>1.0.0.20.RELEASE</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cfca.ra</groupId>
+            <artifactId>SADK</artifactId>
+            <version>3.5.2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>logback-cfca-jdk1.6</groupId>
+            <artifactId>logback-cfca-jdk1.6</artifactId>
+            <version>4.1.1.0</version>
+        </dependency>
+        <!-- testng report相关 -->
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-testng</artifactId>
+            <version>2.0-BETA21</version>
+        </dependency>
+
+    </dependencies>
+
+</project>

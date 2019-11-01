@@ -15,7 +15,7 @@ public class Testcase extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
-    /** null */
+    /** 用例Id */
     private Long testCaseId;
 
     /** 用例父标题 */
