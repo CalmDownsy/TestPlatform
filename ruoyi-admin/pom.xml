@@ -3,9 +3,9 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>ruoyi</artifactId>
-        <groupId>com.ruoyi</groupId>
-        <version>4.0.0</version>
+        <groupId>com.ulpay</groupId>
+        <artifactId>ulpay-testplatform</artifactId>
+        <version>1.0.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 	<packaging>jar</packaging>
@@ -69,31 +69,31 @@
 
 		<!-- 核心模块-->
         <dependency>
-            <groupId>com.ruoyi</groupId>
+            <groupId>com.ulpay</groupId>
             <artifactId>ruoyi-framework</artifactId>
         </dependency>
         
         <!-- 定时任务-->
         <dependency>
-            <groupId>com.ruoyi</groupId>
+            <groupId>com.ulpay</groupId>
             <artifactId>ruoyi-quartz</artifactId>
         </dependency>
         
         <!-- 代码生成-->
         <dependency>
-            <groupId>com.ruoyi</groupId>
+            <groupId>com.ulpay</groupId>
             <artifactId>ruoyi-generator</artifactId>
         </dependency>
 
         <!-- 系统管理 -->
         <dependency>
-            <groupId>com.ruoyi</groupId>
+            <groupId>com.ulpay</groupId>
             <artifactId>ruoyi-system</artifactId>
         </dependency>
 
         <!-- 测试管理 -->
         <dependency>
-            <groupId>com.ruoyi</groupId>
+            <groupId>com.ulpay</groupId>
             <artifactId>ruoyi-test</artifactId>
         </dependency>
 

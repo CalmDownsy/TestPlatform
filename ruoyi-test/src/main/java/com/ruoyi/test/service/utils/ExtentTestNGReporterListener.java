@@ -7,10 +7,6 @@ import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.model.TestAttribute;
 import com.aventstack.extentreports.reporter.ExtentHtmlReporter;
 import com.aventstack.extentreports.reporter.configuration.ChartLocation;
-import com.ruoyi.test.domain.TestResult;
-import com.ruoyi.test.service.ITestResultService;
-import org.omg.Messaging.SYNC_WITH_TRANSPORT;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.*;
 import org.testng.xml.XmlSuite;
 
@@ -22,10 +18,8 @@ import java.util.*;
  * @Date: 2019/1/17 09:43
  * @Description:
  */
+//Testng有自己的类创建工厂，不依赖Spring容器管理
 public class ExtentTestNGReporterListener implements IReporter {
-
-    @Autowired
-    private ITestResultService iTestResultService;
 
     //    报告路径文件名
     private static final String OUTPUT_FOLDER = "test-output/";
@@ -93,17 +87,6 @@ public class ExtentTestNGReporterListener implements IReporter {
                     suiteTest.getModel().setStatus(Status.FAIL);
                 }
             }
-            TestResult testResult = new TestResult();
-            testResult.setResultId(System.currentTimeMillis());
-            testResult.setTestPlanId(System.currentTimeMillis());
-            testResult.setTestTitle("测试标题");
-            testResult.setCaseCount(suitePassSize + suiteSkipSize + suiteFailSize);
-            testResult.setSuccessCount(suitePassSize);
-            testResult.setFailCount(suiteFailSize);
-            testResult.setSkipCount(suiteSkipSize);
-            testResult.setTestResult(suiteTest.getModel().getStatus().toString());
-            testResult.setReportPath("D:\\AutoTest\\TestPlatform\\ruoyi-admin\\test-output\\index.html");
-            iTestResultService.insertTestResult(testResult);
         }
         extentReports.flush();
     }

@@ -3,9 +3,9 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>ruoyi</artifactId>
-        <groupId>com.ruoyi</groupId>
-        <version>4.0.0</version>
+        <groupId>com.ulpay</groupId>
+        <artifactId>ulpay-testplatform</artifactId>
+        <version>1.0.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -37,16 +37,21 @@
 
         <!-- 通用工具-->
         <dependency>
-            <groupId>com.ruoyi</groupId>
+            <groupId>com.ulpay</groupId>
             <artifactId>ruoyi-common</artifactId>
         </dependency>
 
         <!-- 引此包的目的是为了反射能够加载该模块下的类-->
         <dependency>
-            <groupId>com.ruoyi</groupId>
+            <groupId>com.ulpay</groupId>
             <artifactId>autotest</artifactId>
             <!-- 没有在父模块中引入，此处需要版本号 -->
-            <version>4.0.0</version>
+            <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.ulpay</groupId>
+            <artifactId>ruoyi-framework</artifactId>
         </dependency>
 
     </dependencies>
