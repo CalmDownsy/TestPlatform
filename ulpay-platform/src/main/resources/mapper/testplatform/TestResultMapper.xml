@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ulpay.testplatform.mapper.TestResultMapper">
+    
+    <resultMap type="com.ulpay.testplatform.domain.TestResult" id="TestResultResult">
+        <result property="resultId"    column="result_id"    />
+        <result property="testPlanId"    column="test_plan_id"    />
+        <result property="testTitle"    column="test_title"    />
+        <result property="testResult"    column="test_result"    />
+        <result property="caseCount"    column="case_count"    />
+        <result property="successCount"    column="success_count"    />
+        <result property="failCount"    column="fail_count"    />
+        <result property="skipCount"    column="skip_count"    />
+        <result property="duration"    column="duration"    />
+        <result property="reportPath"    column="report_path"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectTestResultVo">
+        select result_id, test_plan_id, test_title, test_result, case_count, success_count, fail_count, skip_count, duration, report_path, create_by, create_time, update_by, update_time, remark from test_result
+    </sql>
+
+    <select id="selectTestResultList" parameterType="com.ulpay.testplatform.domain.TestResult" resultMap="TestResultResult">
+        <include refid="selectTestResultVo"/>
+        <where>  
+            <if test="testPlanId != null "> and test_plan_id = #{testPlanId}</if>
+            <if test="testTitle != null  and testTitle != ''"> and test_title = #{testTitle}</if>
+            <if test="testResult != null  and testResult != ''"> and test_result = #{testResult}</if>
+            <if test="caseCount != null "> and case_count = #{caseCount}</if>
+            <if test="successCount != null "> and success_count = #{successCount}</if>
+            <if test="failCount != null "> and fail_count = #{failCount}</if>
+            <if test="skipCount != null "> and skip_count = #{skipCount}</if>
+            <if test="duration != null "> and duration = #{duration}</if>
+            <if test="reportPath != null  and reportPath != ''"> and report_path = #{reportPath}</if>
+        </where>
+    </select>
+    
+    <select id="selectTestResultById" parameterType="Long" resultMap="TestResultResult">
+        <include refid="selectTestResultVo"/>
+        where result_id = #{resultId}
+    </select>
+        
+    <insert id="insertTestResult" parameterType="com.ulpay.testplatform.domain.TestResult">
+        insert into test_result
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="resultId != null ">result_id,</if>
+            <if test="testPlanId != null ">test_plan_id,</if>
+            <if test="testTitle != null  and testTitle != ''">test_title,</if>
+            <if test="testResult != null  and testResult != ''">test_result,</if>
+            <if test="caseCount != null ">case_count,</if>
+            <if test="successCount != null ">success_count,</if>
+            <if test="failCount != null ">fail_count,</if>
+            <if test="skipCount != null ">skip_count,</if>
+            <if test="duration != null ">duration,</if>
+            <if test="reportPath != null  and reportPath != ''">report_path,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="resultId != null ">#{resultId},</if>
+            <if test="testPlanId != null ">#{testPlanId},</if>
+            <if test="testTitle != null  and testTitle != ''">#{testTitle},</if>
+            <if test="testResult != null  and testResult != ''">#{testResult},</if>
+            <if test="caseCount != null ">#{caseCount},</if>
+            <if test="successCount != null ">#{successCount},</if>
+            <if test="failCount != null ">#{failCount},</if>
+            <if test="skipCount != null ">#{skipCount},</if>
+            <if test="duration != null ">#{duration},</if>
+            <if test="reportPath != null  and reportPath != ''">#{reportPath},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTestResult" parameterType="com.ulpay.testplatform.domain.TestResult">
+        update test_result
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="testPlanId != null ">test_plan_id = #{testPlanId},</if>
+            <if test="testTitle != null  and testTitle != ''">test_title = #{testTitle},</if>
+            <if test="testResult != null  and testResult != ''">test_result = #{testResult},</if>
+            <if test="caseCount != null ">case_count = #{caseCount},</if>
+            <if test="successCount != null ">success_count = #{successCount},</if>
+            <if test="failCount != null ">fail_count = #{failCount},</if>
+            <if test="skipCount != null ">skip_count = #{skipCount},</if>
+            <if test="duration != null ">duration = #{duration},</if>
+            <if test="reportPath != null  and reportPath != ''">report_path = #{reportPath},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+        </trim>
+        where result_id = #{resultId}
+    </update>
+
+    <delete id="deleteTestResultById" parameterType="Long">
+        delete from test_result where result_id = #{resultId}
+    </delete>
+
+    <delete id="deleteTestResultByIds" parameterType="String">
+        delete from test_result where result_id in 
+        <foreach item="resultId" collection="array" open="(" separator="," close=")">
+            #{resultId}
+        </foreach>
+    </delete>
+    
+</mapper>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ulpay.testplatform.mapper.WorkOrderMapper">
+    <resultMap id="WorkOrderResult" type="com.ulpay.testplatform.domain.WorkOrder">
+        <id property="workOrderId" column="work_order_id"/>
+        <result property="workOrderNum" column="work_order_num"/>
+        <result property="workOrderName" column="work_order_name"/>
+        <result property="workOrderType" column="work_order_type"/>
+        <result property="status" column="status"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <sql id="selectWorkOrderVo">
+        select w.work_order_id, w.work_order_num, w.work_order_name, w.work_order_type, w.status,
+            w.start_time, w.end_time, w.create_time, w.create_by, w.remark from workorder w
+    </sql>
+
+    <select id="selectWorkOrderList" parameterType="com.ulpay.testplatform.domain.WorkOrder" resultMap="WorkOrderResult">
+        <include refid="selectWorkOrderVo"/>
+        where 1 = 1
+        <if test="workOrderNum != null and workOrderNum != ''">
+            and w.work_order_num like concat ('%', #{workOrderNum}, '%')
+        </if>
+        <if test="workOrderName != null and workOrderName != ''">
+            and w.work_order_name like concat ('%', #{workOrderName}, '%')
+        </if>
+        <if test="workOrderType != null and workOrderType != ''">
+            and w.work_order_type = #{workOrderType}
+        </if>
+        <if test="status != null and status != ''">
+            and status = #{status}
+        </if>
+        <if test="params.beginTime != null and params.beginTime != ''">
+            and date_format(w.create_time, '%y%m%d') &gt;= date_format(#{params.beginTime}, '%y%m%d')
+        </if>
+        <if test="params.endTime != null and params.endTime != ''">
+            and date_format(w.create_time, '%y%m%d') &lt;= date_format(#{params.endTime}, '%y%m%d')
+        </if>
+    </select>
+
+    <select id="selectWorkOrderById" parameterType="long" resultMap="WorkOrderResult">
+        <include refid="selectWorkOrderVo"/>
+        where 1 = 1 and w.work_order_id = #{workOrderId}
+    </select>
+
+    <update id="updateWorkOrder" parameterType="com.ulpay.testplatform.domain.WorkOrder">
+        update workorder
+        <set>
+            <if test="workOrderNum != null and workOrderNum != ''">work_order_num = #{workOrderNum},</if>
+            <if test="workOrderName != null and workOrderName != ''">work_order_name = #{workOrderName},</if>
+            <if test="workOrderType != null and workOrderType != ''">work_order_type = #{workOrderType},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            #           日期格式不能 != ''
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="remark != null and remark != ''">remark = #{remark},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            update_time = sysdate()
+        </set>
+        where work_order_id = #{workOrderId}
+    </update>
+
+    <insert id="insertWorkOrder" parameterType="com.ulpay.testplatform.domain.WorkOrder" useGeneratedKeys="true" keyProperty="workOrderId">
+        insert into workorder(
+          <if test="workOrderId != null and workOrderId != 0">work_order_id,</if>
+          <if test="workOrderNum != null and workOrderNum != ''">work_order_num,</if>
+          <if test="workOrderName != null and workOrderName != ''">work_order_name,</if>
+          <if test="workOrderType != null and workOrderType != ''">work_order_type,</if>
+          <if test="status != null and status != ''">status,</if>
+#           日期格式不能 != ''
+          <if test="startTime != null">start_time,</if>
+          <if test="endTime != null">end_time,</if>
+          <if test="remark != null and remark != ''">remark,</if>
+          <if test="createBy != null and createBy != ''">create_by,</if>
+          create_time
+        ) values (
+            <if test="workOrderId != null and workOrderId != 0">#{workOrderId},</if>
+            <if test="workOrderNum != null and workOrderNum != ''">#{workOrderNum},</if>
+            <if test="workOrderName != null and workOrderName != ''">#{workOrderName},</if>
+            <if test="workOrderType != null and workOrderType != ''">#{workOrderType},</if>
+            <if test="status != null and status != ''">#{status},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+            <if test="remark != null and remark != ''">#{remark},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            sysdate()
+        )
+    </insert>
+
+    <delete id="delWorkOrderByIds" parameterType="Long">
+        delete from workorder where work_order_id in
+        <foreach collection="array" item="workOrderId" open="(" separator="," close=")">
+            #{workOrderId}
+        </foreach>
+    </delete>
+</mapper>

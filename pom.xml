@@ -215,7 +215,7 @@
             <!-- 测试管理模块-->
             <dependency>
                 <groupId>com.ulpay</groupId>
-                <artifactId>ruoyi-test</artifactId>
+                <artifactId>ulpay-platform</artifactId>
                 <version>${ruoyi.version}</version>
             </dependency>
 
@@ -236,8 +236,7 @@
         <module>ruoyi-quartz</module>
         <module>ruoyi-generator</module>
         <module>ruoyi-common</module>
-        <module>ruoyi-test</module>
-        <module>autotest</module>
+        <module>ulpay-platform</module>
     </modules>
     <packaging>pom</packaging>
 

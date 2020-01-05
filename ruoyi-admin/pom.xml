@@ -94,7 +94,7 @@
         <!-- 测试管理 -->
         <dependency>
             <groupId>com.ulpay</groupId>
-            <artifactId>ruoyi-test</artifactId>
+            <artifactId>ulpay-platform</artifactId>
         </dependency>
 
     </dependencies>
