@@ -19,6 +19,10 @@
     $(function () {
         var options = {
             url: prefix + "/list",
+            queryParams: {
+                //只展示状态正常的接口
+                status: 1
+            },
             columns: [{
                 radio: true
             },
@@ -86,6 +90,14 @@
         //父页面数据回显
         parent.$('#interfaceId').val(rows.join());
         parent.$('#interfaceName').val(selectById(rows.join()));
+        //调用父页面方法
+        //用例维护页面需要调用
+        try {
+            var isExist = typeof (eval('parent.showParams()')) === 'function';
+        } catch (e) {
+            if (!isExist) {
+            }
+        }
     }
     
 

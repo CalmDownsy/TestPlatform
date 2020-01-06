@@ -1,6 +1,8 @@
 package com.ruoyi.web.controller.testplatform;
 
 import java.util.List;
+
+import com.ruoyi.framework.util.ShiroUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -104,6 +106,8 @@ public class TestInterfaceInfoController extends BaseController
     @ResponseBody
     public AjaxResult addSave(TestInterfaceInfo testInterfaceInfo)
     {
+        testInterfaceInfo.setCreateBy(ShiroUtils.getLoginName());
+        ShiroUtils.clearCachedAuthorizationInfo();
         return toAjax(testInterfaceInfoService.insertTestInterfaceInfo(testInterfaceInfo));
     }
 
@@ -127,6 +131,8 @@ public class TestInterfaceInfoController extends BaseController
     @ResponseBody
     public AjaxResult editSave(TestInterfaceInfo testInterfaceInfo)
     {
+        testInterfaceInfo.setUpdateBy(ShiroUtils.getLoginName());
+        ShiroUtils.clearCachedAuthorizationInfo();
         return toAjax(testInterfaceInfoService.updateTestInterfaceInfo(testInterfaceInfo));
     }
 

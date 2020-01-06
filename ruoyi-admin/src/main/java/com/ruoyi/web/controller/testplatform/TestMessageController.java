@@ -1,6 +1,8 @@
 package com.ruoyi.web.controller.testplatform;
 
 import java.util.List;
+
+import com.ruoyi.framework.util.ShiroUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -51,6 +53,16 @@ public class TestMessageController extends BaseController
     }
 
     /**
+     * 查询报文实体列表,不用表分页
+     */
+    @RequiresPermissions("testplatform:message:list")
+    @PostMapping("/getMessageList")
+    @ResponseBody
+    public List<TestMessage> getMessageList(TestMessage testMessage) {
+        return testMessageService.selectTestMessageList(testMessage);
+    }
+
+    /**
      * 导出报文实体列表
      */
     @RequiresPermissions("testplatform:message:export")
@@ -81,6 +93,8 @@ public class TestMessageController extends BaseController
     @ResponseBody
     public AjaxResult addSave(TestMessage testMessage)
     {
+        testMessage.setCreateBy(ShiroUtils.getLoginName());
+        ShiroUtils.clearCachedAuthorizationInfo();
         return toAjax(testMessageService.insertTestMessage(testMessage));
     }
 
@@ -104,6 +118,8 @@ public class TestMessageController extends BaseController
     @ResponseBody
     public AjaxResult editSave(TestMessage testMessage)
     {
+        testMessage.setUpdateBy(ShiroUtils.getLoginName());
+        ShiroUtils.clearCachedAuthorizationInfo();
         return toAjax(testMessageService.updateTestMessage(testMessage));
     }
 

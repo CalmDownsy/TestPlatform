@@ -41,11 +41,6 @@
             <artifactId>ruoyi-common</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>com.ulpay</groupId>
-            <artifactId>ruoyi-framework</artifactId>
-        </dependency>
-
     </dependencies>
 
 </project>

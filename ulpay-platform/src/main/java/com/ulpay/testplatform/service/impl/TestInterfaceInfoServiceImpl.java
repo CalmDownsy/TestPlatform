@@ -2,7 +2,6 @@ package com.ulpay.testplatform.service.impl;
 
 import java.util.List;
 import com.ruoyi.common.utils.DateUtils;
-import com.ruoyi.framework.util.ShiroUtils;
 import com.ulpay.testplatform.domain.TestInterfaceInfo;
 import com.ulpay.testplatform.mapper.TestInterfaceInfoMapper;
 import com.ulpay.testplatform.service.ITestInterfaceInfoService;
@@ -56,8 +55,6 @@ public class TestInterfaceInfoServiceImpl implements ITestInterfaceInfoService
     public int insertTestInterfaceInfo(TestInterfaceInfo testInterfaceInfo)
     {
         testInterfaceInfo.setCreateTime(DateUtils.getNowDate());
-        testInterfaceInfo.setCreateBy(ShiroUtils.getLoginName());
-        ShiroUtils.clearCachedAuthorizationInfo();
         return testInterfaceInfoMapper.insertTestInterfaceInfo(testInterfaceInfo);
     }
 
@@ -71,8 +68,6 @@ public class TestInterfaceInfoServiceImpl implements ITestInterfaceInfoService
     public int updateTestInterfaceInfo(TestInterfaceInfo testInterfaceInfo)
     {
         testInterfaceInfo.setUpdateTime(DateUtils.getNowDate());
-        testInterfaceInfo.setUpdateBy(ShiroUtils.getLoginName());
-        ShiroUtils.clearCachedAuthorizationInfo();
         return testInterfaceInfoMapper.updateTestInterfaceInfo(testInterfaceInfo);
     }
 

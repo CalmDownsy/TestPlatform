@@ -1,100 +1,208 @@
 <!DOCTYPE html>
-<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <th:block th:include="include :: header('新增用例实体')" />
-    <th:block th:include="include :: datetimepicker-css" />
+    <th:block th:include="include :: header('新增用例实体')"/>
+    <th:block th:include="include :: datetimepicker-css"/>
 </head>
 <body class="white-bg">
-    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
-        <form class="form-horizontal m" id="form-case-add">
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">用例名称：</label>
-                <div class="col-sm-8">
-                    <input name="caseName" class="form-control" type="text" required>
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-case-add">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">用例名称：</label>
+            <div class="col-sm-8">
+                <input name="caseName" class="form-control" type="text" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">所属接口：</label>
+            <div class="col-sm-8">
+                <input class="form-control" type="text" onclick="selectInterfaceTable()" id="interfaceName"
+                       name="interfaceName" readonly="true" placeholder="请选择接口"/>
+                <input class="form-control" type="hidden" id="interfaceId" name="interfaceId"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">用例实参：</label>
+            <div class="col-sm-8">
+                <table id="paramTable" class="table">
+                    <thead>
+                    <tr>
+                        <th>节点</th>
+                        <th>字段ID</th>
+                        <th>字段名称</th>
+                        <th>类型</th>
+                        <th>Value</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">用例类型：</label>
+            <div class="col-sm-8">
+                <select name="caseType" class="form-control m-b" th:with="type=${@dict.getType('test_case_type')}">
+                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">用例状态：</label>
+            <div class="col-sm-8">
+                <div class="radio-box" th:each="dict : ${@dict.getType('status')}">
+                    <input type="radio" th:id="${'status_' + dict.dictCode}" name="status" th:value="${dict.dictValue}"
+                           th:checked="${dict.default}">
+                    <label th:for="${'status_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
                 </div>
             </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">所属接口：</label>
-                <div class="col-sm-8">
-                    <input class="form-control" type="text" onclick="selectInterfaceTable()" id="interfaceName"
-                           name="interfaceName" readonly="true" placeholder="请选择接口"/>
-                    <input class="form-control" type="hidden" id="interfaceId" name="interfaceId"/>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">所属环境：</label>
+            <div class="col-sm-8">
+                <select name="env" class="form-control m-b" th:with="type=${@dict.getType('test_env')}">
+                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">校验规则：</label>
+            <div class="col-sm-8">
+                <div class="radio-box" th:each="dict : ${@dict.getType('check_rule_flag')}">
+                    <input type="radio" th:id="${'checkRuleFlag_' + dict.dictCode}" name="checkRuleFlag"
+                           th:value="${dict.dictValue}" th:checked="${dict.default}">
+                    <label th:for="${'checkRuleFlag_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
                 </div>
             </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">用例实参：</label>
-                <div class="col-sm-8">
-                    <input name="parameterJson" class="form-control" type="text" required>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">校验表达式：</label>
+            <div class="col-sm-8">
+                <textarea name="checkExpression" class="form-control" type="text" rows="3"></textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">前置动作：</label>
+            <div class="col-sm-8">
+                <div class="radio-box" th:each="dict : ${@dict.getType('action_type')}">
+                    <input type="radio" th:id="${'preActionId_' + dict.dictCode}" name="preActionId"
+                           th:value="${dict.dictValue}" th:checked="${dict.default}">
+                    <label th:for="${'preActionId_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
                 </div>
             </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">用例类型：</label>
-                <div class="col-sm-8">
-                    <select name="caseType" class="form-control m-b" th:with="type=${@dict.getType('test_case_type')}">
-                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">用例状态：</label>
-                <div class="col-sm-8">
-                    <div class="radio-box" th:each="dict : ${@dict.getType('status')}">
-                        <input type="radio" th:id="${'status_' + dict.dictCode}" name="status" th:value="${dict.dictValue}" th:checked="${dict.default}">
-                        <label th:for="${'status_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">所属环境：</label>
-                <div class="col-sm-8">
-                    <select name="env" class="form-control m-b" th:with="type=${@dict.getType('test_env')}">
-                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">校验规则：</label>
-                <div class="col-sm-8">
-                    <div class="radio-box" th:each="dict : ${@dict.getType('check_rule_flag')}">
-                        <input type="radio" th:id="${'checkRuleFlag_' + dict.dictCode}" name="checkRuleFlag" th:value="${dict.dictValue}" th:checked="${dict.default}">
-                        <label th:for="${'checkRuleFlag_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">校验表达式：</label>
-                <div class="col-sm-8">
-                    <textarea name="checkExpression" class="form-control" type="text" rows="3"></textarea>
-                </div>
-            </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">前置动作：</label>
-                <div class="col-sm-8">
-                    <div class="radio-box" th:each="dict : ${@dict.getType('action_type')}">
-                        <input type="radio" th:id="${'preActionId_' + dict.dictCode}" name="preActionId" th:value="${dict.dictValue}" th:checked="${dict.default}">
-                        <label th:for="${'preActionId_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
-                    </div>
-                </div>
-            </div>
-        </form>
-    </div>
-    <th:block th:include="include :: footer" />
-    <th:block th:include="include :: datetimepicker-js" />
-    <script type="text/javascript">
-        var prefix = ctx + "testplatform/case";
-        $("#form-case-add").validate({
-            focusCleanup: true
-        });
+        </div>
+    </form>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: datetimepicker-js"/>
+<script type="text/javascript">
+    var prefix = ctx + "testplatform/case";
+    $("#form-case-add").validate({
+        focusCleanup: true
+    });
 
-        function selectInterfaceTable() {
-            $.modal.open("选择接口", ctx + "testplatform/interface/selectInterfaceTable")
-        }
+    function selectInterfaceTable() {
+        $.modal.open("选择接口", ctx + "testplatform/interface/selectInterfaceTable")
+    }
 
-        function submitHandler() {
-            if ($.validate.form()) {
-                $.operate.save(prefix + "/add", $('#form-case-add').serialize());
+    //删除参数，用例参数只允许删不允许添加，以报文参数为准
+    function deleteSelectedRow(rowId) {
+        console.log("删除: " + rowId);
+        $("#" + rowId).remove();
+    }
+
+    var flag = 0;
+    function insertNewRow() {
+        var rowLength = $('#paramTable tr').length;
+        var rowId = "row" + flag;
+        var insertStr = "<tr id=" + rowId + ">\n" +
+            "                            <td style=\"width: 12%\">\n" +
+            "                                <input class=\"form-control\" type=\"text\" readonly=\"true\">\n" +
+            "                            </td>\n" +
+            "                            <td>\n" +
+            "                                <input class=\"form-control\" type=\"text\">\n" +
+            "                            </td>\n" +
+            "                            <td>\n" +
+            "                                <input class=\"form-control\" type=\"text\">\n" +
+            "                            </td>\n" +
+            "                            <td>\n" +
+            "                                <select class=\"form-control noselect2 selectpicker\">\n" +
+            "                                    <option value=\"String\">String</option>\n" +
+            "                                    <option value=\"Int\">Int</option>\n" +
+            "                                    <option value=\"Number\">Number</option>\n" +
+            "                                </select>\n" +
+            "                            </td>\n" +
+            "                            <td style=\"width: 20%;\">\n" +
+            "                                <input class=\"form-control\" type=\"text\">\n" +
+            "                            </td>\n" +
+            "                            <td style=\"width: 10%\">\n" +
+            "                                <input type=\"button\" value=\"删除\" class=\"btn btn-danger btn-xs\"\n" +
+            "                                       onclick='deleteSelectedRow(\"" + rowId + "\")'>\n" +
+            "                            </td>\n" +
+            "                        </tr>";
+        console.log("rowlength: " + rowLength);
+        $("#paramTable tr:eq(" + ((rowLength - 1)) + ")").after(insertStr);
+        $("#" + rowId + " td:eq(0)").children().eq(0).attr("id", "parent" + flag);
+        $("#" + rowId + " td:eq(1)").children().eq(0).attr("id", "id" + flag);
+        $("#" + rowId + " td:eq(2)").children().eq(0).attr("id", "name" + flag);
+        $("#" + rowId + " td:eq(3)").children().eq(0).attr("id", "type" + flag);
+        $("#" + rowId + " td:eq(4)").children().eq(0).attr("id", "value" + flag);
+        flag++;
+    }
+
+    //获取当前接口的报文
+    function getParamJson() {
+        var paramJson = '';
+        $.ajax({
+            url: ctx + 'testplatform/message/getMessageList',
+            type: 'post',
+            async: false,
+            data: {
+                interfaceId: $('#interfaceId').val()
+            },
+            success: function (resp) {
+                if ($.common.isEmpty(resp)) {
+                    $.modal.alertError($('#interfaceName').val() + ' 接口: 未配置报文信息');
+                } else {
+                    paramJson = resp[0].parameterJson;
+                    // console.log('type: ' + typeof resp[0].parameterJson)
+                    //重新获取接口信息则需要重新组装参数
+                    flag = 0;
+                    var rowLength = $('#paramTable tr').length;
+                    for (var i=1;i<rowLength;i++) {
+                        $("#paramTable tr:eq(" + i + ")").remove();
+                    }
+                }
+            },
+            error: function () {
+                $.modal.alertError('系统异常');
             }
+        });
+        return paramJson;
+    }
+
+    //参数随接口变化
+    function showParams() {
+        var paramJsonArray = JSON.parse(getParamJson());
+        console.log(paramJsonArray.length);
+        for (var i = 0; i < paramJsonArray.length; i++) {
+            insertNewRow();
+            //赋值
+            var rowId = 'row' + i;
+            $("#" + rowId + " td:eq(0)").children().eq(0).val(paramJsonArray[i].parentNode);
+            $("#" + rowId + " td:eq(1)").children().eq(0).val(paramJsonArray[i].id);
+            $("#" + rowId + " td:eq(2)").children().eq(0).val(paramJsonArray[i].name);
+            $("#" + rowId + " td:eq(3)").children().eq(0).val(paramJsonArray[i].type);
+            $("#" + rowId + " td:eq(4)").children().eq(0).val('');
         }
-    </script>
+    }
+
+    function submitHandler() {
+        if ($.validate.form()) {
+            $.operate.save(prefix + "/add", $('#form-case-add').serialize());
+        }
+    }
+</script>
 </body>
 </html>

@@ -2,7 +2,6 @@ package com.ulpay.testplatform.service.impl;
 
 import java.util.List;
 import com.ruoyi.common.utils.DateUtils;
-import com.ruoyi.framework.util.ShiroUtils;
 import com.ulpay.testplatform.domain.TestMessage;
 import com.ulpay.testplatform.mapper.TestMessageMapper;
 import com.ulpay.testplatform.service.ITestMessageService;
@@ -56,8 +55,6 @@ public class TestMessageServiceImpl implements ITestMessageService
     public int insertTestMessage(TestMessage testMessage)
     {
         testMessage.setCreateTime(DateUtils.getNowDate());
-        testMessage.setCreateBy(ShiroUtils.getLoginName());
-        ShiroUtils.clearCachedAuthorizationInfo();
         return testMessageMapper.insertTestMessage(testMessage);
     }
 
@@ -71,8 +68,6 @@ public class TestMessageServiceImpl implements ITestMessageService
     public int updateTestMessage(TestMessage testMessage)
     {
         testMessage.setUpdateTime(DateUtils.getNowDate());
-        testMessage.setUpdateBy(ShiroUtils.getLoginName());
-        ShiroUtils.clearCachedAuthorizationInfo();
         return testMessageMapper.updateTestMessage(testMessage);
     }
 
