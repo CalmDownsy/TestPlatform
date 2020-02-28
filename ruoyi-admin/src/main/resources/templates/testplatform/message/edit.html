@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('修改报文实体')"/>
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-message-edit" th:object="${testMessage}">
+        <input name="messageId" th:field="*{messageId}" type="hidden">
+        <input name="parameterJson" th:field="*{parameterJson}" type="hidden">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">报文名称：</label>
+            <div class="col-sm-8">
+                <input name="messageName" th:field="*{messageName}" class="form-control" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">报文格式：</label>
+            <div class="col-sm-8">
+                <select name="messageType" id="messageType" class="form-control m-b"
+                        th:with="type=${@dict.getType('test_message_type')}">
+                    <option value="">请选择</option>
+                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"
+                            th:field="*{messageType}"></option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">报文来源：</label>
+            <div class="col-sm-8">
+                <select name="messageRes" id="messageRes" class="form-control m-b"
+                        th:with="type=${@dict.getType('test_message_res')}">
+                    <option value="">请选择</option>
+                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"
+                            th:field="*{messageRes}"></option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">所属接口：</label>
+            <div class="col-sm-8">
+                <input class="form-control" type="text" onclick="selectInterfaceTable()" id="interfaceName"
+                       name="interfaceName" readonly="true"/>
+                <input class="form-control" type="hidden" id="interfaceId" name="interfaceId"
+                       th:field="*{interfaceId}"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">报文参数：</label>
+            <div class="col-sm-8">
+                <table id="paramTable" class="table">
+                    <thead>
+                    <tr>
+                        <th>节点</th>
+                        <th>字段ID</th>
+                        <th>字段名称</th>
+                        <th>类型</th>
+                        <th>长度</th>
+                        <th>是否必须</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <td align="center" colspan="5">
+                            <br/>
+                            <input type="button" name="insert" value="添加参数" class="btn btn-success" style="width:80px"
+                                   onclick="insertNewRow()"/>&nbsp&nbsp
+                        </td>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-3 control-label">报文状态：</label>
+            <div class="col-sm-8">
+                <div class="radio-box" th:each="dict : ${@dict.getType('status')}">
+                    <input type="radio" th:id="${'status_' + dict.dictCode}" name="status" th:value="${dict.dictValue}"
+                           th:field="*{status}">
+                    <label th:for="${'status_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">备注：</label>
+            <div class="col-sm-8">
+                <textarea id="remark" name="remark" th:field="*{remark}" maxlength="500" class="form-control"
+                          rows="3"></textarea>
+            </div>
+        </div>
+    </form>
+</div>
+<th:block th:include="include :: footer"/>
+<script type="text/javascript">
+    var prefix = ctx + "testplatform/message";
+    $("#form-message-edit").validate({
+        focusCleanup: true
+    });
+
+    function selectInterfaceTable() {
+        $.modal.open("选择接口", ctx + "testplatform/interface/selectInterfaceTable")
+    }
+
+    function edit() {
+        var messageId = $("input[name='messageId']").val();
+        var messageName = $("input[name='messageName']").val();
+        var messageType = $("#messageType").val();
+        var messageRes = $("#messageRes").val();
+        var interfaceId = $("#interfaceId").val();
+        //单选框需要加checked
+        var status = $("input[name='status']:checked").val();
+        var remark = $("#remark").val();
+
+        $.ajax({
+            cache: true,
+            type: "post",
+            url: prefix + "/edit",
+            data: {
+                messageId: messageId,
+                messageName: messageName,
+                messageType: messageType,
+                messageRes: messageRes,
+                interfaceId: interfaceId,
+                parameterJson: getParamJson(),
+                status: status,
+                remark: remark
+            },
+            async: false,
+            error: function () {
+                $.modal.alertError("系统错误");
+            },
+            success: function (response) {
+                $.operate.successCallback(response);
+            }
+        });
+    }
+
+    function submitHandler() {
+        if ($.validate.form()) {
+            // $.operate.save(prefix + "/edit", $('#form-message-edit').serialize());
+            edit();
+        }
+    }
+
+    function selectById(interfaceId) {
+        var interfaceName = '';
+        $.ajax({
+            url: ctx + 'testplatform/interface/selectById/' + interfaceId,
+            type: 'get',
+            async: false,
+            success: function (resp) {
+                if (null == resp) {
+                    return;
+                }
+                interfaceName = resp.interfaceName;
+            },
+            error: function () {
+                $.modal.alertError('系统异常');
+            }
+        });
+        return interfaceName;
+    }
+
+    $(function () {
+        $('#interfaceName').val(selectById($('#interfaceId').val()));
+        jsonToTable();
+    });
+
+    var flag = 0;
+    function insertNewRow() {
+        var rowLength = $('#paramTable tr').length;
+        var rowId = "row" + flag;
+        var insertStr = "<tr id=" + rowId + ">\n" +
+            "                        <td style=\"width: 15%\">\n" +
+            "<select class=\"form-control noselect2 selectpicker\" >\n" +
+            "                                <option value=\"INFO\">INFO</option>\n" +
+            "                                <option value=\"BODY\">BODY</option>\n" +
+            "                            </select>" +
+            "                        </td>\n" +
+            "                        <td>\n" +
+            "                            <input class=\"form-control\" type=\"text\">\n" +
+            "                        </td>\n" +
+            "                        <td>\n" +
+            "                            <input class=\"form-control\" type=\"text\">\n" +
+            "                        </td>\n" +
+            "                        <td>\n" +
+            "                            <select class=\"form-control noselect2 selectpicker\">\n" +
+            "                                <option value=\"String\">String</option>\n" +
+            "                                <option value=\"Int\">Int</option>\n" +
+            "                                <option value=\"Number\">Number</option>\n" +
+            "                            </select>\n" +
+            "                        </td>\n" +
+            "                        <td style=\"width: 10%;\">\n" +
+            "                            <input class=\"form-control\" type=\"text\">\n" +
+            "                        </td>\n" +
+            "                        <td style=\"width: 10%\">\n" +
+            "                            <input class=\"form-control\" type=\"text\">\n" +
+            "                        <td>\n" +
+            "                            <input type='button' class='btn btn-danger btn-xs' value='删除'  onclick='deleteSelectedRow(\"" + rowId + "\")'>\n" +
+            "                        </td>\n" +
+            "                    </tr>";
+        console.log("rowlength: " + rowLength);
+        $("#paramTable tr:eq(" + ((rowLength - 2)) + ")").after(insertStr);
+        $("#" + rowId + " td:eq(0)").children().eq(0).attr("id", "parent" + flag);
+        $("#" + rowId + " td:eq(1)").children().eq(0).attr("id", "id" + flag);
+        $("#" + rowId + " td:eq(2)").children().eq(0).attr("id", "name" + flag);
+        $("#" + rowId + " td:eq(3)").children().eq(0).attr("id", "type" + flag);
+        $("#" + rowId + " td:eq(4)").children().eq(0).attr("id", "length" + flag);
+        $("#" + rowId + " td:eq(5)").children().eq(0).attr("id", "require" + flag);
+        flag++;
+    }
+
+    function deleteSelectedRow(rowId) {
+        console.log("删除: " + rowId);
+        $("#" + rowId).remove();
+    }
+
+    //报文参数table数据转为json数组
+    function getParamJson() {
+        var paramJsonArray = [];
+        var rowLength = $('#paramTable tr').length;
+        for (var i = 1; i < rowLength; i++) {
+            var paramJson = {};
+            if (i !== (rowLength - 1)) {
+                const row = document.getElementById('paramTable').rows[i];
+                paramJson.parentNode = $(row.cells[0]).children().eq(0).val();
+                paramJson.id = $(row.cells[1]).children().eq(0).val();
+                paramJson.name = $(row.cells[2]).children().eq(0).val();
+                paramJson.type = $(row.cells[3]).children().eq(0).val();
+                paramJson.length = $(row.cells[4]).children().eq(0).val();
+                paramJson.isRequire = $(row.cells[5]).children().eq(0).val();
+                paramJsonArray.push(paramJson);
+            }
+        }
+        console.log(JSON.stringify(paramJsonArray));
+        return JSON.stringify(paramJsonArray);
+    }
+
+    //报文参数json数组转为table展示
+    function jsonToTable() {
+        var paramJsonArray = JSON.parse($('#parameterJson').val());
+        console.log(paramJsonArray.length);
+        for (var i = 0; i < paramJsonArray.length; i++) {
+            insertNewRow();
+            //赋值
+            var rowId = 'row' + i;
+            $("#" + rowId + " td:eq(0)").children().eq(0).val(paramJsonArray[i].parentNode);
+            $("#" + rowId + " td:eq(1)").children().eq(0).val(paramJsonArray[i].id);
+            $("#" + rowId + " td:eq(2)").children().eq(0).val(paramJsonArray[i].name);
+            $("#" + rowId + " td:eq(3)").children().eq(0).val(paramJsonArray[i].type);
+            $("#" + rowId + " td:eq(4)").children().eq(0).val(paramJsonArray[i].length);
+            $("#" + rowId + " td:eq(5)").children().eq(0).val(paramJsonArray[i].isRequire);
+        }
+    }
+</script>
+</body>
+</html>

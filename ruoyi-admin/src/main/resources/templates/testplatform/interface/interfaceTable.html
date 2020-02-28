@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('接口表格页')"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table" data-mobile-responsive="true"></table>
+        </div>
+    </div>
+</div>
+<div th:include="include :: footer"></div>
+<script th:inline="javascript">
+    var prefix = ctx + "testplatform/interface";
+    var interfaceTypeDatas = [[${@dict.getType('test_interface_type')}]];
+    var statusDatas = [[${@dict.getType('status')}]];
+    $(function () {
+        var options = {
+            url: prefix + "/list",
+            queryParams: {
+                //只展示状态正常的接口
+                status: 1
+            },
+            columns: [{
+                radio: true
+            },
+                {
+                    field: 'interfaceId',
+                    title: '接口Id',
+                    visible: false
+                },
+                {
+                    field: 'interfaceName',
+                    title: '英文名称'
+                },
+                {
+                    field: 'interfaceChName',
+                    title: '中文名称'
+                },
+                {
+                    field: 'requestUrl',
+                    title: '请求路径'
+                },
+                {
+                    field: 'interfaceType',
+                    title: '接口分类',
+                    formatter: function (value, row, index) {
+                        return $.table.selectDictLabel(interfaceTypeDatas, value);
+                    }
+                },
+                {
+                    field: 'status',
+                    title: '接口状态',
+                    formatter: function (value, row, index) {
+                        return $.table.selectDictLabel(statusDatas, value);
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+
+    function selectById(interfaceId) {
+        var interfaceName = '';
+        $.ajax({
+            url: prefix + '/selectById/'+ interfaceId,
+            type: 'get',
+            async: false,
+            success: function (resp) {
+                if (null == resp) {
+                    return;
+                }
+                interfaceName = resp.interfaceName;
+            },
+            error: function () {
+                $.modal.alertError('系统异常');
+            }
+        });
+        return interfaceName;
+    }
+
+    function submitHandler() {
+        var rows = $.table.selectFirstColumns();
+        if (rows.length == 0) {
+            $.modal.alertWarning("请至少选择一条记录");
+            return;
+        }
+        $.modal.close();
+        //父页面数据回显
+        parent.$('#interfaceId').val(rows.join());
+        parent.$('#interfaceName').val(selectById(rows.join()));
+        //调用父页面方法
+        //用例维护页面需要调用
+        try {
+            var isExist = typeof (eval('parent.showParams()')) === 'function';
+        } catch (e) {
+            if (!isExist) {
+            }
+        }
+    }
+    
+
+</script>
+</body>
+</html>
