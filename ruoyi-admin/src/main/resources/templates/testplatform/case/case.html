@@ -1,180 +1,213 @@
 <!DOCTYPE html>
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head>
-    <th:block th:include="include :: header('用例实体列表')" />
+    <th:block th:include="include :: header('用例实体列表')"/>
 </head>
 <body class="gray-bg">
-     <div class="container-div">
-        <div class="row">
-            <div class="col-sm-12 search-collapse">
-                <form id="formId">
-                    <div class="select-list">
-                        <ul>
-                            <li>
-                                <p>用例名称：</p>
-                                <input type="text" name="caseName"/>
-                            </li>
-                            <li>
-                                <p>所属接口：</p>
-                                <input type="text" name="interfaceId"/>
-                            </li>
-                            <li>
-                                <p>用例类型：</p>
-                                <select name="caseType" th:with="type=${@dict.getType('test_case_type')}">
-                                    <option value="">所有</option>
-                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
-                                </select>
-                            </li>
-                            <li>
-                                <p>用例状态：</p>
-                                <select name="status" th:with="type=${@dict.getType('status')}">
-                                    <option value="">所有</option>
-                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
-                                </select>
-                            </li>
-                            <li>
-                                <p>所属环境：</p>
-                                <select name="env" th:with="type=${@dict.getType('test_env')}">
-                                    <option value="">所有</option>
-                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
-                                </select>
-                            </li>
-                            <li class="select-time">
-                                <p>创建时间：</p>
-                                <input type="text" class="time-input" id="startTime" placeholder="开始时间" name="params[beginCreateTime]"/>
-                                <span>-</span>
-                                <input type="text" class="time-input" id="endTime" placeholder="结束时间" name="params[endCreateTime]"/>
-                            </li>
-                            <li>
-                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
-                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
-                            </li>
-                        </ul>
-                    </div>
-                </form>
-            </div>
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <p>用例名称：</p>
+                            <input type="text" name="caseName"/>
+                        </li>
+                        <li>
+                            <p>所属接口：</p>
+                            <input type="text" name="interfaceId"/>
+                        </li>
+                        <li>
+                            <p>用例类型：</p>
+                            <select name="caseType" th:with="type=${@dict.getType('test_case_type')}">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}"
+                                        th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>用例状态：</p>
+                            <select name="status" th:with="type=${@dict.getType('status')}">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}"
+                                        th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>所属环境：</p>
+                            <select name="env" th:with="type=${@dict.getType('test_env')}">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}"
+                                        th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>
+                        <li class="select-time">
+                            <p>创建时间：</p>
+                            <input type="text" class="time-input" id="startTime" placeholder="开始时间"
+                                   name="params[beginCreateTime]"/>
+                            <span>-</span>
+                            <input type="text" class="time-input" id="endTime" placeholder="结束时间"
+                                   name="params[endCreateTime]"/>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i
+                                    class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
 
-            <div class="btn-group-sm" id="toolbar" role="group">
-                <a class="btn btn-success" onclick="$.operate.addFull()" shiro:hasPermission="test:case:add">
-                    <i class="fa fa-plus"></i> 添加
-                </a>
-                <a class="btn btn-primary single disabled" onclick="$.operate.editFull()" shiro:hasPermission="test:case:edit">
-                    <i class="fa fa-edit"></i> 修改
-                </a>
-                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="test:case:remove">
-                    <i class="fa fa-remove"></i> 删除
-                </a>
-                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="test:case:export">
-                    <i class="fa fa-download"></i> 导出
-                 </a>
-            </div>
-            <div class="col-sm-12 select-table table-striped">
-                <table id="bootstrap-table" data-mobile-responsive="true"></table>
-            </div>
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-success" onclick="$.operate.addFull()" shiro:hasPermission="test:case:add">
+                <i class="fa fa-plus"></i> 添加
+            </a>
+            <a class="btn btn-primary single disabled" onclick="$.operate.editFull()"
+               shiro:hasPermission="test:case:edit">
+                <i class="fa fa-edit"></i> 修改
+            </a>
+            <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()"
+               shiro:hasPermission="test:case:remove">
+                <i class="fa fa-remove"></i> 删除
+            </a>
+            <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="test:case:export">
+                <i class="fa fa-download"></i> 导出
+            </a>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table" data-mobile-responsive="true"></table>
         </div>
     </div>
-    <th:block th:include="include :: footer" />
-    <script th:inline="javascript">
-        var editFlag = [[${@permission.hasPermi('test:case:edit')}]];
-        var removeFlag = [[${@permission.hasPermi('test:case:remove')}]];
-        var caseTypeDatas = [[${@dict.getType('test_case_type')}]];
-        var statusDatas = [[${@dict.getType('status')}]];
-        var envDatas = [[${@dict.getType('test_env')}]];
-        var checkRuleFlagDatas = [[${@dict.getType('check_rule_flag')}]];
-        var preActionIdDatas = [[${@dict.getType('action_type')}]];
-        var prefix = ctx + "testplatform/case";
+</div>
+<th:block th:include="include :: footer"/>
+<script th:inline="javascript">
+    var editFlag = [[${@permission.hasPermi('test:case:edit')}]];
+    var removeFlag = [[${@permission.hasPermi('test:case:remove')}]];
+    var caseTypeDatas = [[${@dict.getType('test_case_type')}]];
+    var statusDatas = [[${@dict.getType('status')}]];
+    var envDatas = [[${@dict.getType('test_env')}]];
+    var checkRuleFlagDatas = [[${@dict.getType('check_rule_flag')}]];
+    var preActionIdDatas = [[${@dict.getType('action_type')}]];
+    var prefix = ctx + "testplatform/case";
 
-        function selectById(interfaceId) {
-            var interfaceName = '';
-            $.ajax({
-                url: ctx + 'testplatform/interface/selectById/' + interfaceId,
-                type: 'get',
-                async: false,
-                success: function (resp) {
-                    if (null == resp) {
-                        return;
-                    }
-                    interfaceName = resp.interfaceName;
-                },
-                error: function () {
-                    $.modal.alertError('系统异常');
+    function selectById(interfaceId) {
+        var interfaceName = '';
+        $.ajax({
+            url: ctx + 'testplatform/interface/selectById/' + interfaceId,
+            type: 'get',
+            async: false,
+            success: function (resp) {
+                if (null == resp) {
+                    return;
                 }
-            });
-            return interfaceName;
-        }
+                interfaceName = resp.interfaceName;
+            },
+            error: function () {
+                $.modal.alertError('系统异常');
+            }
+        });
+        return interfaceName;
+    }
 
 
-        $(function() {
-            var options = {
-                url: prefix + "/list",
-                createUrl: prefix + "/add",
-                updateUrl: prefix + "/edit/{id}",
-                removeUrl: prefix + "/remove",
-                exportUrl: prefix + "/export",
-                modalName: "用例实体",
-                columns: [{
-                    checkbox: true
-                },
+    $(function () {
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            modalName: "用例实体",
+            columns: [{
+                checkbox: true
+            },
                 {
-                    field : 'caseId', 
-                    title : '用例Id',
+                    field: 'caseId',
+                    title: '用例Id',
                     visible: false
                 },
                 {
-                    field : 'caseName', 
-                    title : '用例名称'
+                    field: 'caseName',
+                    title: '用例名称'
                 },
                 {
-                    field : 'interfaceId', 
-                    title : '所属接口',
+                    field: 'interfaceId',
+                    title: '所属接口',
                     formatter: function (value, row, index) {
                         //待优化 查询次数太多
                         return (selectById(value));
                     }
                 },
                 {
-                    field : 'caseType', 
-                    title : '用例类型',
-                    formatter: function(value, row, index) {
-                       return $.table.selectDictLabel(caseTypeDatas, value);
+                    field: 'caseType',
+                    title: '用例类型',
+                    formatter: function (value, row, index) {
+                        return $.table.selectDictLabel(caseTypeDatas, value);
                     }
                 },
                 {
-                    field : 'status', 
-                    title : '用例状态',
-                    formatter: function(value, row, index) {
-                       return $.table.selectDictLabel(statusDatas, value);
+                    field: 'status',
+                    title: '用例状态',
+                    formatter: function (value, row, index) {
+                        return $.table.selectDictLabel(statusDatas, value);
                     }
                 },
                 {
-                    field : 'env', 
-                    title : '所属环境',
-                    formatter: function(value, row, index) {
-                       return $.table.selectDictLabel(envDatas, value);
+                    field: 'env',
+                    title: '所属环境',
+                    formatter: function (value, row, index) {
+                        return $.table.selectDictLabel(envDatas, value);
                     }
                 },
                 {
-                    field : 'lastRunTime', 
-                    title : '最近执行时间'
+                    field: 'lastRunTime',
+                    title: '最近执行时间'
+                },
+                {
+                    field: 'createBy',
+                    title: '创建人',
+                    visible: false
+                },
+                {
+                    field: 'createTime',
+                    title: '创建时间'
+                },
+                {
+                    field: 'updateBy',
+                    title: '修改人',
+                    visible: false
+                },
+                {
+                    field: 'updateTime',
+                    title: '修改时间',
+                    visible: false
+                },
+                {
+                    field: 'remark',
+                    title: '备注'
                 },
                 {
                     title: '操作',
                     align: 'center',
-                    formatter: function(value, row, index) {
+                    formatter: function (value, row, index) {
                         var actions = [];
-                        actions.push('<a class="btn btn-primary btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="run()" title="运行"><i class="fa fa-play"></i></a> ');
+                        actions.push('<a class="btn btn-primary btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="run(\'' + row.caseId + '\')" title="运行"><i class="fa fa-play"></i></a> ');
                         actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.editFull(\'' + row.caseId + '\')" title="编辑"><i class="fa fa-edit"></i></a> ');
                         actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.caseId + '\')" title="删除"><i class="fa fa-remove"></i></a>');
                         return actions.join('');
                     }
                 }]
-            };
-            $.table.init(options);
-        });
+        };
+        $.table.init(options);
+    });
 
-        function run() {
-            alert('case run')
-        }
-    </script>
+    function run(caseId) {
+        var url = prefix + '/runCase/' + caseId;
+        $.modal.openFull('执行用例', url);
+    }
+</script>
 </body>
 </html>

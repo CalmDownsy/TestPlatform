@@ -1,12 +1,19 @@
 package com.ruoyi.web.controller.testplatform;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
+import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.framework.util.ShiroUtils;
+import com.ulpay.testplatform.common.enums.BusinessLine;
+import com.ulpay.testplatform.common.enums.WorkOrderType;
 import com.ulpay.testplatform.domain.WorkOrder;
+import com.ulpay.testplatform.domain.WorkOrderReportData;
+import com.ulpay.testplatform.domain.WorkOrderReportRequest;
 import com.ulpay.testplatform.service.IWorOrderService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,25 +22,61 @@ import org.springframework.ui.ModelMap;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/testplatform/workorder")
 public class WorkOrderController extends BaseController {
 
-    private String prefix= "testplatform/workorder";
+    private String prefix = "testplatform/workorder";
 
     @Autowired
     private IWorOrderService worOrderService;
 
     /**
      * 工单主页面
+     *
      * @return
      */
     @RequiresPermissions("testplatform:workorder:view")
     @GetMapping()
     public String workOrder() {
         return prefix + "/workorder";
+    }
+
+    /**
+     * 工单占比页面
+     *
+     * @return
+     */
+    @RequiresPermissions("testplatform:workorder:view")
+    @GetMapping("/proportion")
+    public String proportion() {
+        return prefix + "/proportion";
+    }
+
+    /**
+     * 工单趋势页面
+     *
+     * @return
+     */
+    @RequiresPermissions("testplatform:workorder:view")
+    @GetMapping("/rend")
+    public String proportionDetail() {
+        return prefix + "/rend";
+    }
+
+    /**
+     * 累计占比页面
+     *
+     * @return
+     */
+    @RequiresPermissions("testplatform:workorder:view")
+    @GetMapping("/cumproportion")
+    public String cumProportion() {
+        return prefix + "/cumproportion";
     }
 
     /**
@@ -46,6 +89,54 @@ public class WorkOrderController extends BaseController {
         startPage();
         List<WorkOrder> list = worOrderService.selectWorkOrderList(workOrder);
         return getDataTable(list);
+    }
+
+    /**
+     * 获取工单占比
+     */
+    @RequiresPermissions("testplatform:workorder:list")
+    @PostMapping("/selectWorkOrderProportion")
+    @ResponseBody
+    public AjaxResult selectWorkOrderProportion(WorkOrderReportRequest reportRequest) {
+        AjaxResult ajaxResult;
+        JSONObject echartsOption = worOrderService.selectWorkOrderProportion(reportRequest);
+        if (echartsOption.get("series") instanceof Integer) {
+            return AjaxResult.warn("未查询到结果");
+        }
+        ajaxResult = AjaxResult.success(echartsOption);
+        return ajaxResult;
+    }
+
+    /**
+     * 获取工单趋势
+     */
+    @RequiresPermissions("testplatform:workorder:list")
+    @PostMapping("/selectWorkOrderRend")
+    @ResponseBody
+    public AjaxResult selectWorkOrderRend(WorkOrderReportRequest reportRequest) {
+        AjaxResult ajaxResult;
+        JSONObject echartsOption = worOrderService.selectWorkOrderRend(reportRequest);
+        if (echartsOption.get("series") instanceof Integer) {
+            return AjaxResult.warn("未查询到结果");
+        }
+        ajaxResult = AjaxResult.success(echartsOption);
+        return ajaxResult;
+    }
+
+    /**
+     * 获取工单累计占比
+     */
+    @RequiresPermissions("testplatform:workorder:list")
+    @PostMapping("/selectCumProportion")
+    @ResponseBody
+    public AjaxResult selectCumProportion(WorkOrderReportRequest reportRequest) {
+        AjaxResult ajaxResult;
+        JSONObject echartsOption = worOrderService.selectCumProportion(reportRequest);
+        if (echartsOption.get("series") instanceof Integer) {
+            return AjaxResult.warn("未查询到结果");
+        }
+        ajaxResult = AjaxResult.success(echartsOption);
+        return ajaxResult;
     }
 
     /**

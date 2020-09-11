@@ -22,17 +22,63 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
-
-        <!--testng-->
         <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.2</version>
+        </dependency>
+
+        <!-- orale驱动包 -->
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>ojdbc16</artifactId>
+            <version>11.2.0.1.0</version>
         </dependency>
 
         <dependency>
-            <groupId>com.aventstack</groupId>
-            <artifactId>extentreports</artifactId>
-            <version>3.0.6</version>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>6.11</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+        </dependency>
+
+        <!-- 证书相关依赖 -->
+        <dependency>
+            <groupId>com.itrus</groupId>
+            <artifactId>iTrusCertAPI_jdk15</artifactId>
+            <version>2.9.2</version>
+        </dependency>
+        <dependency>
+            <groupId>cfca.ra</groupId>
+            <artifactId>SADK</artifactId>
+            <version>3.5.2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>logback-cfca-jdk1.6</groupId>
+            <artifactId>logback-cfca-jdk1.6</artifactId>
+            <version>4.1.1.0</version>
+        </dependency>
+        <!-- 加签加压相关jar包 -->
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcmail-jdk15</artifactId>
+            <version>1.45</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk15</artifactId>
+            <version>1.45</version>
+        </dependency>
+
+        <!-- hessian jar -->
+        <dependency>
+            <groupId>com.caucho</groupId>
+            <artifactId>hessian</artifactId>
+            <version>4.0.38</version>
         </dependency>
 
         <!-- 通用工具-->
@@ -40,7 +86,6 @@
             <groupId>com.ulpay</groupId>
             <artifactId>ruoyi-common</artifactId>
         </dependency>
-
     </dependencies>
 
 </project>

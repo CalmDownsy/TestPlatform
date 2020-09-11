@@ -28,6 +28,8 @@ public class TestMessage extends BaseEntity
 
     private String messageRes;
 
+    private String messageProcess;
+
     /** 所属接口 */
     @Excel(name = "所属接口")
     private Long interfaceId;
@@ -80,7 +82,15 @@ public class TestMessage extends BaseEntity
         this.interfaceId = interfaceId;
     }
 
-    public Long getInterfaceId() 
+    public String getMessageProcess() {
+        return messageProcess;
+    }
+
+    public void setMessageProcess(String messageProcess) {
+        this.messageProcess = messageProcess;
+    }
+
+    public Long getInterfaceId()
     {
         return interfaceId;
     }
@@ -110,6 +120,7 @@ public class TestMessage extends BaseEntity
             .append("messageName", getMessageName())
             .append("messageType", getMessageType())
             .append("messageRes", getMessageRes())
+            .append("messageProcess", getMessageProcess())
             .append("interfaceId", getInterfaceId())
             .append("parameterJson", getParameterJson())
             .append("status", getStatus())

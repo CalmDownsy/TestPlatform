@@ -22,14 +22,14 @@
                             <p>请求路径：</p>
                             <input type="text" name="requestUrl"/>
                         </li>
-                        <li>
-                            <p>接口分类：</p>
-                            <select name="interfaceType" th:with="type=${@dict.getType('test_interface_type')}">
-                                <option value="">请选择</option>
-                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}"
-                                        th:value="${dict.dictValue}"></option>
-                            </select>
-                        </li>
+                        <!--<li>-->
+                            <!--<p>接口分类：</p>-->
+                            <!--<select name="interfaceType" th:with="type=${@dict.getType('test_interface_type')}">-->
+                                <!--<option value="">请选择</option>-->
+                                <!--<option th:each="dict : ${type}" th:text="${dict.dictLabel}"-->
+                                        <!--th:value="${dict.dictValue}"></option>-->
+                            <!--</select>-->
+                        <!--</li>-->
                         <li>
                             <p>接口协议：</p>
                             <select name="interfaceProtocol" th:with="type=${@dict.getType('test_interface_protocol')}">
@@ -121,16 +121,20 @@
                     title: '中文名称'
                 },
                 {
+                    field: 'envNameLink',
+                    title: '应用名'
+                },
+                {
                     field: 'requestUrl',
                     title: '请求路径'
                 },
-                {
-                    field: 'interfaceType',
-                    title: '接口分类',
-                    formatter: function (value, row, index) {
-                        return $.table.selectDictLabel(interfaceTypeDatas, value);
-                    }
-                },
+                <!--{-->
+                    <!--field: 'interfaceType',-->
+                    <!--title: '接口分类',-->
+                    <!--formatter: function (value, row, index) {-->
+                        <!--return $.table.selectDictLabel(interfaceTypeDatas, value);-->
+                    <!--}-->
+                <!--},-->
                 {
                     field: 'interfaceProtocol',
                     title: '接口协议',

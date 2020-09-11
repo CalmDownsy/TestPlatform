@@ -4,10 +4,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ulpay.testplatform.mapper.TestInterfaceInfoMapper">
     
-    <resultMap type="TestInterfaceInfo" id="TestInterfaceInfoResult">
+    <resultMap type="com.ulpay.testplatform.domain.TestInterfaceInfo" id="TestInterfaceInfoResult">
         <result property="interfaceId"    column="interface_id"    />
         <result property="interfaceName"    column="interface_name"    />
         <result property="interfaceChName"    column="interface_ch_name"    />
+        <result property="envNameLink"    column="env_name_link"    />
         <result property="requestUrl"    column="request_url"    />
         <result property="interfaceType"    column="interface_type"    />
         <result property="interfaceProtocol"    column="interface_protocol"    />
@@ -21,14 +22,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectTestInterfaceInfoVo">
-        select interface_id, interface_name, interface_ch_name, request_url, interface_type, interface_protocol, request_type, status, create_by, create_time, update_by, update_time, remark from test_interface_info
+        select interface_id, interface_name, interface_ch_name, env_name_link, request_url, interface_type, interface_protocol, request_type, status, create_by, create_time, update_by, update_time, remark from test_interface_info
     </sql>
 
-    <select id="selectTestInterfaceInfoList" parameterType="TestInterfaceInfo" resultMap="TestInterfaceInfoResult">
+    <select id="selectTestInterfaceInfoList" parameterType="com.ulpay.testplatform.domain.TestInterfaceInfo" resultMap="TestInterfaceInfoResult">
         <include refid="selectTestInterfaceInfoVo"/>
         <where>  
             <if test="interfaceName != null  and interfaceName != ''"> and interface_name like concat('%', #{interfaceName}, '%')</if>
             <if test="interfaceChName != null  and interfaceChName != ''"> and interface_ch_name like concat('%', #{interfaceChName}, '%')</if>
+            <if test="envNameLink != null  and envNameLink != ''"> and env_name_link = #{envNameLink}</if>
             <if test="requestUrl != null  and requestUrl != ''"> and request_url = #{requestUrl}</if>
             <if test="interfaceType != null  and interfaceType != ''"> and interface_type = #{interfaceType}</if>
             <if test="interfaceProtocol != null  and interfaceProtocol != ''"> and interface_protocol = #{interfaceProtocol}</if>
@@ -42,11 +44,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where interface_id = #{interfaceId}
     </select>
         
-    <insert id="insertTestInterfaceInfo" parameterType="TestInterfaceInfo" useGeneratedKeys="true" keyProperty="interfaceId">
+    <insert id="insertTestInterfaceInfo" parameterType="com.ulpay.testplatform.domain.TestInterfaceInfo" useGeneratedKeys="true" keyProperty="interfaceId">
         insert into test_interface_info
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="interfaceName != null  and interfaceName != ''">interface_name,</if>
             <if test="interfaceChName != null  and interfaceChName != ''">interface_ch_name,</if>
+            <if test="envNameLink != null  and envNameLink != ''">env_name_link,</if>
             <if test="requestUrl != null  and requestUrl != ''">request_url,</if>
             <if test="interfaceType != null  and interfaceType != ''">interface_type,</if>
             <if test="interfaceProtocol != null  and interfaceProtocol != ''">interface_protocol,</if>
@@ -61,6 +64,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="interfaceName != null  and interfaceName != ''">#{interfaceName},</if>
             <if test="interfaceChName != null  and interfaceChName != ''">#{interfaceChName},</if>
+            <if test="envNameLink != null  and envNameLink != ''">#{envNameLink},</if>
             <if test="requestUrl != null  and requestUrl != ''">#{requestUrl},</if>
             <if test="interfaceType != null  and interfaceType != ''">#{interfaceType},</if>
             <if test="interfaceProtocol != null  and interfaceProtocol != ''">#{interfaceProtocol},</if>
@@ -74,11 +78,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
-    <update id="updateTestInterfaceInfo" parameterType="TestInterfaceInfo">
+    <update id="updateTestInterfaceInfo" parameterType="com.ulpay.testplatform.domain.TestInterfaceInfo">
         update test_interface_info
         <trim prefix="SET" suffixOverrides=",">
             <if test="interfaceName != null  and interfaceName != ''">interface_name = #{interfaceName},</if>
             <if test="interfaceChName != null  and interfaceChName != ''">interface_ch_name = #{interfaceChName},</if>
+            <if test="envNameLink != null  and envNameLink != ''">env_name_link = #{envNameLink},</if>
             <if test="requestUrl != null  and requestUrl != ''">request_url = #{requestUrl},</if>
             <if test="interfaceType != null  and interfaceType != ''">interface_type = #{interfaceType},</if>
             <if test="interfaceProtocol != null  and interfaceProtocol != ''">interface_protocol = #{interfaceProtocol},</if>

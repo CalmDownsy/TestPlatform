@@ -8,12 +8,27 @@
     <div class="warpper wrapper-content animated fadeInRight ibox-content">
         <form class="form-horizontal m" id="form-workorder-add">
             <div class="form-group">
+                <label class="col-sm-3 control-label"><span style="color: red">*</span>业务线：</label>
+                <div class="col-sm-8">
+                    <select id="busiLine" name="busiLine" class="form-control m-b" th:with="type=${@dict.getType('busi_line')}" required>
+                        <option value="">请选择</option>
+                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
                 <label class="col-sm-3 control-label"><span style="color: red">*</span>工单类型：</label>
                 <div class="col-sm-8">
                     <select id="workOrderType" name="workOrderType" class="form-control m-b" th:with="type=${@dict.getType('test_workorder_type')}" required>
                         <option value="">请选择</option>
                         <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
                     </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">DB类型：</label>
+                <div class="col-sm-8">
+                    <input class="form-control" type="text" name="dbType" id="dbType"/>
                 </div>
             </div>
             <div class="form-group">
@@ -29,19 +44,19 @@
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-3 control-label"><span style="color: red">*</span>开始时间：</label>
+                <label class="col-sm-3 control-label"><span style="color: red">*</span>上线时间：</label>
                 <div class="input-group date col-sm-8" style="padding-left: 14px; padding-right: 15px">
                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                     <input class="form-control" type="text" name="startTime" id="startTime" placeholder="yyyy-MM-dd" required/>
                 </div>
             </div>
-            <div class="form-group">
-                <label class="col-sm-3 control-label"><span style="color: red">*</span>结束时间：</label>
-                <div class="input-group date col-sm-8" style="padding-left: 14px; padding-right: 15px">
-                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                    <input class="form-control" type="text" name="endTime" id="endTime" placeholder="yyyy-MM-dd" required/>
-                </div>
-            </div>
+<!--            <div class="form-group">-->
+<!--                <label class="col-sm-3 control-label"><span style="color: red">*</span>结束时间：</label>-->
+<!--                <div class="input-group date col-sm-8" style="padding-left: 14px; padding-right: 15px">-->
+<!--                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>-->
+<!--                    <input class="form-control" type="text" name="endTime" id="endTime" placeholder="yyyy-MM-dd" required/>-->
+<!--                </div>-->
+<!--            </div>-->
             <div class="form-group">
                 <label class="col-sm-3 control-label">备注：</label>
                 <div class="col-sm-8">
@@ -61,9 +76,9 @@
                 laydate.render({
                     elem: '#startTime'
                 });
-                laydate.render({
-                    elem: '#endTime'
-                });
+                // laydate.render({
+                //     elem: '#endTime'
+                // });
             });
         });
 
@@ -81,8 +96,10 @@
             var workOrderName = $("input[name='workOrderName']").val();
             // var status = $("input[name='status']").val();
             var workOrderType = $("#workOrderType").val();
+            var busiLine = $("#busiLine").val();
+            var dbType = $("#dbType").val();
             var startTime = $("input[name='startTime']").val();
-            var endTime = $("input[name='endTime']").val();
+            // var endTime = $("input[name='endTime']").val();
             var remark = $("input[name='remark']").val();
             $.ajax({
                 cache: true,
@@ -92,8 +109,10 @@
                     "workOrderNum": workOrderNum,
                     "workOrderName": workOrderName,
                     "workOrderType": workOrderType,
+                    "busiLine": busiLine,
+                    "dbType": dbType,
                     "startTime": startTime,
-                    "endTime": endTime,
+                    // "endTime": endTime,
                     "remark": remark
                 },
                 async: false,

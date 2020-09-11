@@ -1,8 +1,12 @@
 package com.ruoyi.common.utils.bean;
 
+import org.springframework.cglib.beans.BeanMap;
+
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -107,4 +111,35 @@ public class BeanUtils extends org.springframework.beans.BeanUtils
     {
         return m1.substring(BEAN_METHOD_PROP_INDEX).equals(m2.substring(BEAN_METHOD_PROP_INDEX));
     }
+
+    /**
+     * 将map装换为javabean对象
+     * @param map
+     * @param bean
+     * @return
+     */
+    public static <T> T mapToBean(Map<String, Object> map, T bean) {
+        BeanMap beanMap = BeanMap.create(bean);
+        beanMap.putAll(map);
+        return bean;
+    }
+
+    /**
+     * bean转Map
+     * @param <T>
+     * @return
+     */
+    public static <T> Map<String,Object> bean2Map(T bean){
+        Map<String,Object> map = new HashMap<String,Object>();
+        try{
+            if (bean != null){
+                BeanMap beanMap = BeanMap.create(bean);
+                map.putAll(beanMap);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return map;
+    }
+
 }

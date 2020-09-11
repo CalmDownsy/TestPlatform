@@ -1,8 +1,12 @@
 package com.ruoyi.web.controller.testplatform;
 
 import java.util.List;
+import java.util.Map;
 
 import com.ruoyi.framework.util.ShiroUtils;
+import com.ulpay.testplatform.domain.TestInterfaceInfo;
+import com.ulpay.testplatform.service.ITestInterfaceInfoService;
+import com.ulpay.testplatform.utils.ScanJarUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -133,5 +137,10 @@ public class TestMessageController extends BaseController
     public AjaxResult remove(String ids)
     {
         return toAjax(testMessageService.deleteTestMessageByIds(ids));
+    }
+
+    public AjaxResult getFacadeParams(Long interfaceId) {
+
+        return new AjaxResult();
     }
 }

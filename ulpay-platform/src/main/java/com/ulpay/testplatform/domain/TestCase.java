@@ -27,8 +27,17 @@ public class TestCase extends BaseEntity
     @Excel(name = "所属接口")
     private Long interfaceId;
 
+    private Long messageId;
+
     /** 用例实参 */
     private String parameterJson;
+
+    private String isSign;
+
+    /** 证书ID，与证书存储表ID一致 */
+    private int certId;
+
+    private String isEncrypted;
 
     /** 用例类型，auto,manual */
     @Excel(name = "用例类型，auto,manual")
@@ -58,8 +67,11 @@ public class TestCase extends BaseEntity
     /** 校验表达式 */
     private String checkExpression;
 
-    /** 前置动作 */
-    private Long preActionId;
+    /** 前置动作类型 */
+    private Integer preActionId;
+
+    /** 前置动作明细 */
+    private String actionDetail;
 
     public void setCaseId(Long caseId) 
     {
@@ -93,11 +105,44 @@ public class TestCase extends BaseEntity
         this.parameterJson = parameterJson;
     }
 
-    public String getParameterJson() 
+    public Long getMessageId() {
+        return messageId;
+    }
+
+    public void setMessageId(Long messageId) {
+        this.messageId = messageId;
+    }
+
+    public String getParameterJson()
     {
         return parameterJson;
     }
-    public void setCaseType(String caseType) 
+
+    public String getIsSign() {
+        return isSign;
+    }
+
+    public void setIsSign(String isSign) {
+        this.isSign = isSign;
+    }
+
+    public int getCertId() {
+        return certId;
+    }
+
+    public void setCertId(int certId) {
+        this.certId = certId;
+    }
+
+    public String getIsEncrypted() {
+        return isEncrypted;
+    }
+
+    public void setIsEncrypted(String isEncrypted) {
+        this.isEncrypted = isEncrypted;
+    }
+
+    public void setCaseType(String caseType)
     {
         this.caseType = caseType;
     }
@@ -169,14 +214,22 @@ public class TestCase extends BaseEntity
     {
         return checkExpression;
     }
-    public void setPreActionId(Long preActionId) 
+    public void setPreActionId(Integer preActionId)
     {
         this.preActionId = preActionId;
     }
 
-    public Long getPreActionId() 
+    public Integer getPreActionId()
     {
         return preActionId;
+    }
+
+    public String getActionDetail() {
+        return actionDetail;
+    }
+
+    public void setActionDetail(String actionDetail) {
+        this.actionDetail = actionDetail;
     }
 
     @Override
@@ -185,7 +238,11 @@ public class TestCase extends BaseEntity
             .append("caseId", getCaseId())
             .append("caseName", getCaseName())
             .append("interfaceId", getInterfaceId())
+            .append("messageId", getMessageId())
             .append("parameterJson", getParameterJson())
+            .append("isSign", getIsSign())
+            .append("certId", getCertId())
+            .append("isEncrypted", getIsEncrypted())
             .append("caseType", getCaseType())
             .append("status", getStatus())
             .append("env", getEnv())
@@ -195,6 +252,7 @@ public class TestCase extends BaseEntity
             .append("checkRuleFlag", getCheckRuleFlag())
             .append("checkExpression", getCheckExpression())
             .append("preActionId", getPreActionId())
+            .append("actionDetail", getActionDetail())
             .append("createBy", getCreateBy())
             .append("createTime", getCreateTime())
             .append("updateBy", getUpdateBy())

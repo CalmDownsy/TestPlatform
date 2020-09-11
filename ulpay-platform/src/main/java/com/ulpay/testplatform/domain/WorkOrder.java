@@ -50,6 +50,16 @@ public class WorkOrder extends BaseEntity {
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date endTime;
 
+    /**
+     * 业务线
+     */
+    private String busiLine;
+
+    /**
+     * 如果是db工单，需要细分类型
+     */
+    private String dbType;
+
     public Long getWorkOrderId() {
         return workOrderId;
     }
@@ -106,6 +116,23 @@ public class WorkOrder extends BaseEntity {
         this.endTime = endTime;
     }
 
+
+    public String getBusiLine() {
+        return busiLine;
+    }
+
+    public void setBusiLine(String busiLine) {
+        this.busiLine = busiLine;
+    }
+
+    public String getDbType() {
+        return dbType;
+    }
+
+    public void setDbType(String dbType) {
+        this.dbType = dbType;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
@@ -121,6 +148,8 @@ public class WorkOrder extends BaseEntity {
                 .append("updateBy", getUpdateBy())
                 .append("updateTime", getUpdateTime())
                 .append("remark", getRemark())
+                .append("busiLine", getRemark())
+                .append("dbType", getRemark())
                 .toString();
     }
 }

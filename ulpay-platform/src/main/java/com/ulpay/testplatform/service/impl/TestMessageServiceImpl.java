@@ -1,10 +1,15 @@
 package com.ulpay.testplatform.service.impl;
 
 import java.util.List;
+import java.util.Map;
+
 import com.ruoyi.common.utils.DateUtils;
+import com.ulpay.testplatform.domain.TestInterfaceInfo;
 import com.ulpay.testplatform.domain.TestMessage;
+import com.ulpay.testplatform.mapper.TestInterfaceInfoMapper;
 import com.ulpay.testplatform.mapper.TestMessageMapper;
 import com.ulpay.testplatform.service.ITestMessageService;
+import com.ulpay.testplatform.utils.ScanJarUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.common.core.text.Convert;
@@ -18,8 +23,15 @@ import com.ruoyi.common.core.text.Convert;
 @Service
 public class TestMessageServiceImpl implements ITestMessageService
 {
+
+    // 绝对路径-固定
+    private static final String jarFilePath = "";
+
     @Autowired
     private TestMessageMapper testMessageMapper;
+
+    @Autowired
+    private TestInterfaceInfoMapper testInterfaceInfoMapper;
 
     /**
      * 查询报文实体
@@ -89,8 +101,14 @@ public class TestMessageServiceImpl implements ITestMessageService
      * @param messageId 报文实体ID
      * @return 结果
      */
+    @Override
     public int deleteTestMessageById(Long messageId)
     {
         return testMessageMapper.deleteTestMessageById(messageId);
+    }
+
+    @Override
+    public String getFacadeParams(Long interfaceId) {
+        return null;
     }
 }

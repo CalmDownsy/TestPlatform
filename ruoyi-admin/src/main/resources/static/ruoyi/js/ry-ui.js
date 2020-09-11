@@ -357,13 +357,23 @@
             },
             // 查询表格指定列值
             selectColumns: function(column) {
-            	var rows = $.map($.btTable.bootstrapTable('getSelections'), function (row) {
-        	        return row[column];
-        	    });
-            	if ($.common.isNotEmpty($.table._option.rememberSelected) && $.table._option.rememberSelected) {
-            		rows = rows.concat(selectionIds);
-            	}
-            	return $.common.uniqueFn(rows);
+                var rows = $.map($.btTable.bootstrapTable('getSelections'), function (row) {
+                    return row[column];
+                });
+                if ($.common.isNotEmpty($.table._option.rememberSelected) && $.table._option.rememberSelected) {
+                    rows = rows.concat(selectionIds);
+                }
+                return $.common.uniqueFn(rows);
+            },
+            // 查询表格指定列值
+            selectColumnsByRow: function(column) {
+                var rows = $.map($.btTable.bootstrapTable('getSelections'), function (row) {
+                    return row[$.table._option.columns[column].field];
+                });
+                if ($.common.isNotEmpty($.table._option.rememberSelected) && $.table._option.rememberSelected) {
+                    rows = rows.concat(selectionIds);
+                }
+                return $.common.uniqueFn(rows);
             },
             // 获取当前页选中或者取消的行ID
             affectedRowIds: function(rows) {

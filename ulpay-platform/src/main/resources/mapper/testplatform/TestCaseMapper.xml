@@ -8,7 +8,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="caseId"    column="case_id"    />
         <result property="caseName"    column="case_name"    />
         <result property="interfaceId"    column="interface_id"    />
+        <result property="messageId"    column="message_id"    />
         <result property="parameterJson"    column="parameter_json"    />
+        <result property="isSign"    column="is_sign"    />
+        <result property="certId"    column="cert_id"    />
+        <result property="isEncrypted"    column="is_encrypted"    />
         <result property="caseType"    column="case_type"    />
         <result property="status"    column="status"    />
         <result property="env"    column="env"    />
@@ -18,6 +22,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="checkRuleFlag"    column="check_rule_flag"    />
         <result property="checkExpression"    column="check_expression"    />
         <result property="preActionId"    column="pre_action_id"    />
+        <result property="actionDetail"    column="action_detail"    />
         <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
@@ -26,14 +31,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectTestCaseVo">
-        select case_id, case_name, interface_id, parameter_json, case_type, status, env, first_run_time, last_run_time, run_count, check_rule_flag, check_expression, pre_action_id, create_by, create_time, update_by, update_time, remark from test_case
+        select case_id, case_name, interface_id, message_id, parameter_json, is_sign, cert_id, is_encrypted, case_type, status, env, first_run_time, last_run_time, run_count, check_rule_flag, check_expression, pre_action_id, action_detail, create_by, create_time, update_by, update_time, remark from test_case
     </sql>
 
-    <select id="selectTestCaseList" parameterType="TestCase" resultMap="TestCaseResult">
+    <select id="selectTestCaseList" parameterType="com.ulpay.testplatform.domain.TestCase" resultMap="TestCaseResult">
         <include refid="selectTestCaseVo"/>
         <where>  
             <if test="caseName != null  and caseName != ''"> and case_name like concat('%', #{caseName}, '%')</if>
             <if test="interfaceId != null "> and interface_id = #{interfaceId}</if>
+            <if test="messageId != null "> and message_id = #{messageId}</if>
             <if test="caseType != null  and caseType != ''"> and case_type = #{caseType}</if>
             <if test="status != null  and status != ''"> and status = #{status}</if>
             <if test="env != null  and env != ''"> and env = #{env}</if>
@@ -47,12 +53,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where case_id = #{caseId}
     </select>
         
-    <insert id="insertTestCase" parameterType="TestCase" useGeneratedKeys="true" keyProperty="caseId">
+    <insert id="insertTestCase" parameterType="com.ulpay.testplatform.domain.TestCase" useGeneratedKeys="true" keyProperty="caseId">
         insert into test_case
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="caseName != null  and caseName != ''">case_name,</if>
             <if test="interfaceId != null ">interface_id,</if>
+            <if test="messageId != null ">message_id,</if>
             <if test="parameterJson != null  and parameterJson != ''">parameter_json,</if>
+            <if test="isSign != null  and isSign != ''">is_sign,</if>
+            <if test="certId != null  and certId != ''">cert_id,</if>
+            <if test="isEncrypted != null  and isEncrypted != ''">is_encrypted,</if>
             <if test="caseType != null  and caseType != ''">case_type,</if>
             <if test="status != null  and status != ''">status,</if>
             <if test="env != null  and env != ''">env,</if>
@@ -62,6 +72,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="checkRuleFlag != null  and checkRuleFlag != ''">check_rule_flag,</if>
             <if test="checkExpression != null  and checkExpression != ''">check_expression,</if>
             <if test="preActionId != null ">pre_action_id,</if>
+            <if test="actionDetail != null ">action_detail,</if>
             <if test="createBy != null  and createBy != ''">create_by,</if>
             <if test="createTime != null ">create_time,</if>
             <if test="updateBy != null  and updateBy != ''">update_by,</if>
@@ -71,7 +82,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="caseName != null  and caseName != ''">#{caseName},</if>
             <if test="interfaceId != null ">#{interfaceId},</if>
+            <if test="messageId != null ">#{messageId},</if>
             <if test="parameterJson != null  and parameterJson != ''">#{parameterJson},</if>
+            <if test="isSign != null  and isSign != ''">#{isSign},</if>
+            <if test="certId != null  and certId != ''">#{certId},</if>
+            <if test="isEncrypted != null  and isEncrypted != ''">#{isEncrypted},</if>
             <if test="caseType != null  and caseType != ''">#{caseType},</if>
             <if test="status != null  and status != ''">#{status},</if>
             <if test="env != null  and env != ''">#{env},</if>
@@ -81,6 +96,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="checkRuleFlag != null  and checkRuleFlag != ''">#{checkRuleFlag},</if>
             <if test="checkExpression != null  and checkExpression != ''">#{checkExpression},</if>
             <if test="preActionId != null ">#{preActionId},</if>
+            <if test="actionDetail != null ">#{actionDetail},</if>
             <if test="createBy != null  and createBy != ''">#{createBy},</if>
             <if test="createTime != null ">#{createTime},</if>
             <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
@@ -89,12 +105,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
-    <update id="updateTestCase" parameterType="TestCase">
+    <update id="updateTestCase" parameterType="com.ulpay.testplatform.domain.TestCase">
         update test_case
         <trim prefix="SET" suffixOverrides=",">
             <if test="caseName != null  and caseName != ''">case_name = #{caseName},</if>
             <if test="interfaceId != null ">interface_id = #{interfaceId},</if>
+            <if test="messageId != null ">message_id = #{messageId},</if>
             <if test="parameterJson != null  and parameterJson != ''">parameter_json = #{parameterJson},</if>
+            <if test="isSign != null  and isSign != ''">is_sign = #{isSign},</if>
+            cert_id = #{certId},
+            <if test="isEncrypted != null  and isEncrypted != ''">is_encrypted = #{isEncrypted},</if>
             <if test="caseType != null  and caseType != ''">case_type = #{caseType},</if>
             <if test="status != null  and status != ''">status = #{status},</if>
             <if test="env != null  and env != ''">env = #{env},</if>
@@ -104,6 +124,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="checkRuleFlag != null  and checkRuleFlag != ''">check_rule_flag = #{checkRuleFlag},</if>
             <if test="checkExpression != null  and checkExpression != ''">check_expression = #{checkExpression},</if>
             <if test="preActionId != null ">pre_action_id = #{preActionId},</if>
+            <if test="actionDetail != null ">action_detail = #{actionDetail},</if>
             <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
             <if test="createTime != null ">create_time = #{createTime},</if>
             <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>

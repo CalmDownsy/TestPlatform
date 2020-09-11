@@ -1,6 +1,8 @@
 package com.ulpay.testplatform.mapper;
 
 import com.ulpay.testplatform.domain.TestCase;
+import org.springframework.stereotype.Component;
+
 import java.util.List;
 
 /**
@@ -9,6 +11,7 @@ import java.util.List;
  * @author zhangsy
  * @date 2020-01-02
  */
+@Component
 public interface TestCaseMapper 
 {
     /**

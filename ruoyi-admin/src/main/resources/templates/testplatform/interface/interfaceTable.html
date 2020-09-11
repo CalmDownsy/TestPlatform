@@ -6,6 +6,60 @@
 <body class="gray-bg">
 <div class="container-div">
     <div class="row">
+        <div class="col-sm-12 search-collapse" style="display: none;">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <p>英文名称：</p>
+                            <input type="text" name="interfaceName"/>
+                        </li>
+                        <li>
+                            <p>中文名称：</p>
+                            <input type="text" name="interfaceChName"/>
+                        </li>
+                        <!--<li>-->
+                            <!--<p>接口分类：</p>-->
+                            <!--<select name="interfaceType" th:with="type=${@dict.getType('test_interface_type')}">-->
+                                <!--<option value="">请选择</option>-->
+                                <!--<option th:each="dict : ${type}" th:text="${dict.dictLabel}"-->
+                                        <!--th:value="${dict.dictValue}"></option>-->
+                            <!--</select>-->
+                        <!--</li>-->
+                        <li>
+                            <p>接口协议：</p>
+                            <select name="interfaceProtocol" th:with="type=${@dict.getType('test_interface_protocol')}">
+                                <option value="">请选择</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}"
+                                        th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>请求类型：</p>
+                            <select name="requestType" th:with="type=${@dict.getType('test_request_type')}">
+                                <option value="">请选择</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}"
+                                        th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>接口状态：</p>
+                            <select name="status" th:with="type=${@dict.getType('status')}">
+                                <option value="">请选择</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}"
+                                        th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i
+                                    class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
         <div class="col-sm-12 select-table table-striped">
             <table id="bootstrap-table" data-mobile-responsive="true"></table>
         </div>
@@ -19,6 +73,10 @@
     $(function () {
         var options = {
             url: prefix + "/list",
+            showSearch: true,
+            showRefresh: false,
+            showToggle: false,
+            showColumns: false,
             queryParams: {
                 //只展示状态正常的接口
                 status: 1
@@ -43,13 +101,13 @@
                     field: 'requestUrl',
                     title: '请求路径'
                 },
-                {
-                    field: 'interfaceType',
-                    title: '接口分类',
-                    formatter: function (value, row, index) {
-                        return $.table.selectDictLabel(interfaceTypeDatas, value);
-                    }
-                },
+                <!--{-->
+                    <!--field: 'interfaceType',-->
+                    <!--title: '接口分类',-->
+                    <!--formatter: function (value, row, index) {-->
+                        <!--return $.table.selectDictLabel(interfaceTypeDatas, value);-->
+                    <!--}-->
+                <!--},-->
                 {
                     field: 'status',
                     title: '接口状态',

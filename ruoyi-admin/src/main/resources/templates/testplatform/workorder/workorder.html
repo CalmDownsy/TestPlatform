@@ -17,6 +17,12 @@
                             工单名称：<input type="text" name="workOrderName"/>
                         </li>
                         <li>
+                            业务线：<select id="busiLine" name="busiLine" th:with="type=${@dict.getType('busi_line')}">
+                            <option value="">请选择</option>
+                            <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                        </select>
+                        </li>
+                        <li>
                             工单类型：<select id="workOrderType" name="workOrderType" th:with="type=${@dict.getType('test_workorder_type')}">
                             <option value="">请选择</option>
                             <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
@@ -32,7 +38,7 @@
                     </ul>
                     <ul>
                         <li class="select-time">
-                            <label>创建时间： </label>
+                            <label>上线时间： </label>
                             <input type="text" class="time-input" id="startTime" placeholder="开始时间" name="params[beginTime]"/>
                             <span>-</span>
                             <input type="text" class="time-input" id="endTime" placeholder="结束时间" name="params[endTime]"/>
@@ -68,6 +74,7 @@
     var editFlag = [[${@permission.hasPermi('test:workorder:edit')}]];
     var removeFlag = [[${@permission.hasPermi('test:workorder:remove')}]];
     var type = [[${@dict.getType('test_workorder_type')}]];
+    var busiLine = [[${@dict.getType('busi_line')}]];
     //变量不要用一些特殊命名 如 status
     var datas = [[${@dict.getType('test_workorder_status')}]];
     var prefix = ctx + "testplatform/workorder";
@@ -100,6 +107,16 @@
                     title: '工单名称'
                 },
                 {
+                    field: 'busiLine',
+                    title: '业务线',
+                    sortable: true,
+                    align: 'center',
+                    formatter: function (value) {
+                        //回显样式
+                        return $.table.selectDictLabel(busiLine, value);
+                    }
+                },
+                {
                     field: 'workOrderType',
                     title: '工单类型',
                     sortable: true,
@@ -119,12 +136,12 @@
                 },
                 {
                     field: 'startTime',
-                    title: '开始时间'
+                    title: '上线时间'
                 },
-                {
-                    field: 'endTime',
-                    title: '结束时间'
-                },
+                // {
+                //     field: 'endTime',
+                //     title: '结束时间'
+                // },
                 {
                     field: 'createTime',
                     title: '创建时间',

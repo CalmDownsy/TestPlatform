@@ -6,9 +6,9 @@ spring:
         druid:
             # 主库数据源
             master:
-                url: jdbc:mysql://localhost:3306/testplatform?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+                url: jdbc:mysql://10.63.12.200:3306/testplatform?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
                 username: root
-                password:
+                password: mysql123
             # 从库数据源
             slave:
                 # 从数据源开关/默认关闭
@@ -55,3 +55,49 @@ spring:
                 wall:
                     config:
                         multi-statement-allow: true
+
+#自定义数据源
+uat:
+    yewudatabase:
+        type: oracle
+        url: 10.63.14.132
+        port: 1521
+        servicename: UATBUSI_ADM
+        username: testdba
+        password: test1234
+    basepaydatabase:
+        type: oracle
+        url: 10.63.14.62
+        port: 1521
+        servicename: UATCORE_ADM
+        username: testdba
+        password: test1234
+    querydatabase:
+        type: oracle
+        url: 10.63.14.138
+        port: 1521
+        servicename: UATSQRY_ADM
+        username: testdba
+        password: test1234
+lt:
+    yewudatabase:
+        type: oracle
+        url: 10.63.14.133
+        port: 1521
+        servicename: MBUSI_ADM
+        username: testdba
+        password: test1234
+    basepaydatabase:
+        type: oracle
+        url: 10.63.14.62
+        port: 1521
+        servicename: MCORE_ADM
+        username: testdba
+        password: test1234
+    querydatabase:
+        type: oracle
+        url: 10.63.14.139
+        port: 1521
+        servicename: MSQRY_ADM
+        username: testdba
+        password: test1234

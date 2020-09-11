@@ -9,14 +9,14 @@
         <input name="messageId" th:field="*{messageId}" type="hidden">
         <input name="parameterJson" th:field="*{parameterJson}" type="hidden">
         <div class="form-group">
-            <label class="col-sm-3 control-label">报文名称：</label>
-            <div class="col-sm-8">
+            <label class="col-sm-2 control-label">报文名称：</label>
+            <div class="col-sm-10">
                 <input name="messageName" th:field="*{messageName}" class="form-control" type="text">
             </div>
         </div>
         <div class="form-group">
-            <label class="col-sm-3 control-label">报文格式：</label>
-            <div class="col-sm-8">
+            <label class="col-sm-2 control-label">报文格式：</label>
+            <div class="col-sm-10">
                 <select name="messageType" id="messageType" class="form-control m-b"
                         th:with="type=${@dict.getType('test_message_type')}">
                     <option value="">请选择</option>
@@ -26,8 +26,8 @@
             </div>
         </div>
         <div class="form-group">
-            <label class="col-sm-3 control-label">报文来源：</label>
-            <div class="col-sm-8">
+            <label class="col-sm-2 control-label">报文来源：</label>
+            <div class="col-sm-10">
                 <select name="messageRes" id="messageRes" class="form-control m-b"
                         th:with="type=${@dict.getType('test_message_res')}">
                     <option value="">请选择</option>
@@ -37,8 +37,8 @@
             </div>
         </div>
         <div class="form-group">
-            <label class="col-sm-3 control-label">所属接口：</label>
-            <div class="col-sm-8">
+            <label class="col-sm-2 control-label">所属接口：</label>
+            <div class="col-sm-10">
                 <input class="form-control" type="text" onclick="selectInterfaceTable()" id="interfaceName"
                        name="interfaceName" readonly="true"/>
                 <input class="form-control" type="hidden" id="interfaceId" name="interfaceId"
@@ -46,17 +46,19 @@
             </div>
         </div>
         <div class="form-group">
-            <label class="col-sm-3 control-label">报文参数：</label>
-            <div class="col-sm-8">
+            <label class="col-sm-2 control-label">报文参数：</label>
+            <div class="col-sm-10">
                 <table id="paramTable" class="table">
                     <thead>
                     <tr>
-                        <th>节点</th>
+                        <th>父节点ID</th>
                         <th>字段ID</th>
                         <th>字段名称</th>
                         <th>类型</th>
                         <th>长度</th>
+                        <th>说明</th>
                         <th>是否必须</th>
+                        <th>默认值</th>
                         <th>操作</th>
                     </tr>
                     </thead>
@@ -76,8 +78,8 @@
         </div>
 
         <div class="form-group">
-            <label class="col-sm-3 control-label">报文状态：</label>
-            <div class="col-sm-8">
+            <label class="col-sm-2 control-label">报文状态：</label>
+            <div class="col-sm-10">
                 <div class="radio-box" th:each="dict : ${@dict.getType('status')}">
                     <input type="radio" th:id="${'status_' + dict.dictCode}" name="status" th:value="${dict.dictValue}"
                            th:field="*{status}">
@@ -86,8 +88,8 @@
             </div>
         </div>
         <div class="form-group">
-            <label class="col-sm-3 control-label">备注：</label>
-            <div class="col-sm-8">
+            <label class="col-sm-2 control-label">备注：</label>
+            <div class="col-sm-10">
                 <textarea id="remark" name="remark" th:field="*{remark}" maxlength="500" class="form-control"
                           rows="3"></textarea>
             </div>
@@ -170,16 +172,33 @@
         jsonToTable();
     });
 
+    function descriptionAlert(rowId){
+        var desc = $(rowId.cells[5]).children().eq(0).val();
+        layer.open({
+            title: $(rowId.cells[2]).children().eq(0).val(),
+            type: 1,
+            closeBtn: true,
+            shadeClose: true,
+            area: ['400px', '160px'],
+            content: "<textarea id='descAlert' class='form-control' row='3' cols='2' placeholder='请输入说明'>"+desc+"</textarea>",
+            btn: ['确定', '关闭'],
+            yes: function(index) {
+                $(rowId.cells[5]).children().eq(0).val($("#descAlert").val());
+                layer.close(index);
+            },
+            cancel: function(index) {
+                return true;
+            }
+        });
+    }
+
     var flag = 0;
     function insertNewRow() {
         var rowLength = $('#paramTable tr').length;
         var rowId = "row" + flag;
         var insertStr = "<tr id=" + rowId + ">\n" +
-            "                        <td style=\"width: 15%\">\n" +
-            "<select class=\"form-control noselect2 selectpicker\" >\n" +
-            "                                <option value=\"INFO\">INFO</option>\n" +
-            "                                <option value=\"BODY\">BODY</option>\n" +
-            "                            </select>" +
+            "                        <td style=\"width: 12%\">\n" +
+            "<input class='form-control' type='text' />"+
             "                        </td>\n" +
             "                        <td>\n" +
             "                            <input class=\"form-control\" type=\"text\">\n" +
@@ -198,24 +217,35 @@
             "                            <input class=\"form-control\" type=\"text\">\n" +
             "                        </td>\n" +
             "                        <td style=\"width: 10%\">\n" +
-            "                            <input class=\"form-control\" type=\"text\">\n" +
+            "                            <input class=\"form-control\" type=\"text\" onfocus='descriptionAlert("+rowId+")'>\n" +
+            "                        </td>\n" +
             "                        <td>\n" +
+            "                            <select class=\"form-control noselect2 selectpicker\">\n" +
+            "                                <option value=\"Y\">Y</option>\n" +
+            "                                <option value=\"N\">N</option>\n" +
+            "                                <option value=\"C\">C</option>\n" +
+            "                            </select>\n" +
+            "                        </td>\n" +
+            "                        <td style=\"width: 15%\">\n" +
+            "                            <input class=\"form-control\" type=\"text\">\n" +
+            "                        </td>\n" +
+            "                        <td style=\"width: 10%\">\n" +
             "                            <input type='button' class='btn btn-danger btn-xs' value='删除'  onclick='deleteSelectedRow(\"" + rowId + "\")'>\n" +
             "                        </td>\n" +
             "                    </tr>";
-        console.log("rowlength: " + rowLength);
         $("#paramTable tr:eq(" + ((rowLength - 2)) + ")").after(insertStr);
         $("#" + rowId + " td:eq(0)").children().eq(0).attr("id", "parent" + flag);
         $("#" + rowId + " td:eq(1)").children().eq(0).attr("id", "id" + flag);
         $("#" + rowId + " td:eq(2)").children().eq(0).attr("id", "name" + flag);
         $("#" + rowId + " td:eq(3)").children().eq(0).attr("id", "type" + flag);
         $("#" + rowId + " td:eq(4)").children().eq(0).attr("id", "length" + flag);
-        $("#" + rowId + " td:eq(5)").children().eq(0).attr("id", "require" + flag);
+        $("#" + rowId + " td:eq(5)").children().eq(0).attr("id", "description" + flag);
+        $("#" + rowId + " td:eq(6)").children().eq(0).attr("id", "require" + flag);
+        $("#" + rowId + " td:eq(7)").children().eq(0).attr("id", "defaultValue" + flag);
         flag++;
     }
 
     function deleteSelectedRow(rowId) {
-        console.log("删除: " + rowId);
         $("#" + rowId).remove();
     }
 
@@ -225,6 +255,7 @@
         var rowLength = $('#paramTable tr').length;
         for (var i = 1; i < rowLength; i++) {
             var paramJson = {};
+            //最后一行为按钮剔除
             if (i !== (rowLength - 1)) {
                 const row = document.getElementById('paramTable').rows[i];
                 paramJson.parentNode = $(row.cells[0]).children().eq(0).val();
@@ -232,18 +263,18 @@
                 paramJson.name = $(row.cells[2]).children().eq(0).val();
                 paramJson.type = $(row.cells[3]).children().eq(0).val();
                 paramJson.length = $(row.cells[4]).children().eq(0).val();
-                paramJson.isRequire = $(row.cells[5]).children().eq(0).val();
+                paramJson.description = $(row.cells[5]).children().eq(0).val();
+                paramJson.isRequire = $(row.cells[6]).children().eq(0).val();
+                paramJson.defaultValue = $(row.cells[7]).children().eq(0).val();
                 paramJsonArray.push(paramJson);
             }
         }
-        console.log(JSON.stringify(paramJsonArray));
         return JSON.stringify(paramJsonArray);
     }
 
     //报文参数json数组转为table展示
     function jsonToTable() {
         var paramJsonArray = JSON.parse($('#parameterJson').val());
-        console.log(paramJsonArray.length);
         for (var i = 0; i < paramJsonArray.length; i++) {
             insertNewRow();
             //赋值
@@ -253,7 +284,9 @@
             $("#" + rowId + " td:eq(2)").children().eq(0).val(paramJsonArray[i].name);
             $("#" + rowId + " td:eq(3)").children().eq(0).val(paramJsonArray[i].type);
             $("#" + rowId + " td:eq(4)").children().eq(0).val(paramJsonArray[i].length);
-            $("#" + rowId + " td:eq(5)").children().eq(0).val(paramJsonArray[i].isRequire);
+            $("#" + rowId + " td:eq(5)").children().eq(0).val(paramJsonArray[i].description);
+            $("#" + rowId + " td:eq(6)").children().eq(0).val(paramJsonArray[i].isRequire);
+            $("#" + rowId + " td:eq(7)").children().eq(0).val(paramJsonArray[i].defaultValue);
         }
     }
 </script>

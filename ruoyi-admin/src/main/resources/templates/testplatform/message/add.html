@@ -7,24 +7,24 @@
 <div class="wrapper wrapper-content animated fadeInRight ibox-content">
     <form class="form-horizontal m" id="form-message-add">
         <div class="form-group">
-            <label class="col-sm-3 control-label">报文名称：</label>
-            <div class="col-sm-8">
+            <label class="col-sm-2 control-label">报文名称：</label>
+            <div class="col-sm-10">
                 <input name="messageName" class="form-control" type="text">
             </div>
         </div>
         <div class="form-group">
-            <label class="col-sm-3 control-label">报文格式：</label>
-            <div class="col-sm-8">
+            <label class="col-sm-2 control-label">报文格式：</label>
+            <div class="col-sm-10">
                 <select id="messageType" name="messageType" class="form-control m-b"
-                        th:with="type=${@dict.getType('test_message_type')}">
+                        th:with="type=${@dict.getType('test_message_type')}" onchange="demoData()">
                     <option value="">请选择</option>
                     <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
                 </select>
             </div>
         </div>
         <div class="form-group">
-            <label class="col-sm-3 control-label">报文来源：</label>
-            <div class="col-sm-8">
+            <label class="col-sm-2 control-label">报文来源：</label>
+            <div class="col-sm-10">
                 <select id="messageRes" name="messageRes" class="form-control m-b"
                         th:with="type=${@dict.getType('test_message_res')}">
                     <option value="">请选择</option>
@@ -33,59 +33,31 @@
             </div>
         </div>
         <div class="form-group">
-            <label class="col-sm-3 control-label">所属接口：</label>
-            <div class="col-sm-8">
+            <label class="col-sm-2 control-label">所属接口：</label>
+            <div class="col-sm-10">
                 <input class="form-control" type="text" onclick="selectInterfaceTable()" id="interfaceName"
                        name="interfaceName" readonly="true" placeholder="请选择接口"/>
                 <input class="form-control" type="hidden" id="interfaceId" name="interfaceId"/>
             </div>
         </div>
         <div class="form-group">
-            <label class="col-sm-3 control-label">报文参数：</label>
-            <div class="col-sm-8">
+            <label class="col-sm-2 control-label">报文参数：</label>
+            <div class="col-sm-10">
                 <table id="paramTable" class="table">
                     <thead>
                     <tr>
-                        <th>节点</th>
+                        <th>父节点ID</th>
                         <th>字段ID</th>
                         <th>字段名称</th>
                         <th>类型</th>
                         <th>长度</th>
+                        <th>说明</th>
                         <th>是否必须</th>
+                        <th>默认值</th>
                         <th>操作</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr id="row0">
-                        <td style="width: 15%">
-                            <select class="form-control noselect2 selectpicker" id="parent0">
-                                <option value="INFO">INFO</option>
-                                <option value="BODY">BODY</option>
-                            </select>
-                        </td>
-                        <td>
-                            <input class="form-control" type="text" id="id0">
-                        </td>
-                        <td>
-                            <input class="form-control" type="text" id="name0">
-                        </td>
-                        <td>
-                            <select class="form-control noselect2 selectpicker" id="type0">
-                                <option value="String">String</option>
-                                <option value="Int">Int</option>
-                                <option value="Number">Number</option>
-                            </select>
-                        </td>
-                        <td style="width: 10%;">
-                            <input class="form-control" type="text" id="length0">
-                        </td>
-                        <td style="width: 10%">
-                            <input class="form-control" type="text" id="require0">
-                        <td style="width: 10%">
-                            <input type="button" value="删除" class="btn btn-danger btn-xs"
-                                   onclick="deleteSelectedRow(0)">
-                        </td>
-                    </tr>
                     </tbody>
                     <tfoot>
                     <tr>
@@ -100,8 +72,8 @@
             </div>
         </div>
         <div class="form-group">
-            <label class="col-sm-3 control-label">报文状态：</label>
-            <div class="col-sm-8">
+            <label class="col-sm-2 control-label">报文状态：</label>
+            <div class="col-sm-10">
                 <div class="radio-box" th:each="dict : ${@dict.getType('status')}">
                     <input type="radio" th:id="${'status_' + dict.dictCode}" name="status" th:value="${dict.dictValue}">
                     <label th:for="${'status_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
@@ -109,8 +81,8 @@
             </div>
         </div>
         <div class="form-group">
-            <label class="col-sm-3 control-label">备注：</label>
-            <div class="col-sm-8">
+            <label class="col-sm-2 control-label">备注：</label>
+            <div class="col-sm-10">
                 <textarea id="remark" name="remark" maxlength="500" class="form-control" rows="3"></textarea>
             </div>
         </div>
@@ -161,16 +133,33 @@
         });
     }
 
-    var flag = 1;
+    function descriptionAlert(rowId){
+        var desc = $(rowId.cells[5]).children().eq(0).val();
+        layer.open({
+            title: $(rowId.cells[2]).children().eq(0).val(),
+            type: 1,
+            closeBtn: true,
+            shadeClose: true,
+            area: ['400px', '160px'],
+            content: "<textarea id='descAlert' class='form-control' row='3' cols='2' placeholder='请输入说明'>"+desc+"</textarea>",
+            btn: ['确定', '关闭'],
+            yes: function(index) {
+                $(rowId.cells[5]).children().eq(0).val($("#descAlert").val());
+                layer.close(index);
+            },
+            cancel: function(index) {
+                return true;
+            }
+        });
+    }
+
+    var flag = 0;
     function insertNewRow() {
         var rowLength = $('#paramTable tr').length;
         var rowId = "row" + flag;
         var insertStr = "<tr id=" + rowId + ">\n" +
-            "                        <td style=\"width: 15%\">\n" +
-            "<select class=\"form-control noselect2 selectpicker\" >\n" +
-            "                                <option value=\"INFO\">INFO</option>\n" +
-            "                                <option value=\"BODY\">BODY</option>\n" +
-            "                            </select>" +
+            "                        <td style=\"width: 12%\">\n" +
+            "<input class='form-control' type='text' />"+
             "                        </td>\n" +
             "                        <td>\n" +
             "                            <input class=\"form-control\" type=\"text\">\n" +
@@ -188,25 +177,36 @@
             "                        <td style=\"width: 10%;\">\n" +
             "                            <input class=\"form-control\" type=\"text\">\n" +
             "                        </td>\n" +
-            "                        <td style=\"width: 10%\">\n" +
-            "                            <input class=\"form-control\" type=\"text\">\n" +
+            "                        <td style=\"width: 10%;\">\n" +
+            "                            <input class=\"form-control\" type=\"text\" onfocus='descriptionAlert("+rowId+")'>\n" +
+            "                        </td>\n" +
             "                        <td>\n" +
+            "                            <select class=\"form-control noselect2 selectpicker\">\n" +
+            "                                <option value=\"Y\">Y</option>\n" +
+            "                                <option value=\"N\">N</option>\n" +
+            "                                <option value=\"C\">C</option>\n" +
+            "                            </select>\n" +
+            "                        </td>\n" +
+            "                        <td style=\"width: 15%\">\n" +
+            "                            <input class=\"form-control\" type=\"text\">\n" +
+            "                        </td>\n" +
+            "                        <td style=\"width: 10%\">\n" +
             "                            <input type='button' class='btn btn-danger btn-xs' value='删除'  onclick='deleteSelectedRow(\"" + rowId + "\")'>\n" +
             "                        </td>\n" +
             "                    </tr>";
-        console.log("rowlength: " + rowLength);
         $("#paramTable tr:eq(" + ((rowLength - 2)) + ")").after(insertStr);
         $("#" + rowId + " td:eq(0)").children().eq(0).attr("id", "parent" + flag);
         $("#" + rowId + " td:eq(1)").children().eq(0).attr("id", "id" + flag);
         $("#" + rowId + " td:eq(2)").children().eq(0).attr("id", "name" + flag);
         $("#" + rowId + " td:eq(3)").children().eq(0).attr("id", "type" + flag);
         $("#" + rowId + " td:eq(4)").children().eq(0).attr("id", "length" + flag);
-        $("#" + rowId + " td:eq(5)").children().eq(0).attr("id", "require" + flag);
+        $("#" + rowId + " td:eq(5)").children().eq(0).attr("id", "description" + flag);
+        $("#" + rowId + " td:eq(6)").children().eq(0).attr("id", "require" + flag);
+        $("#" + rowId + " td:eq(7)").children().eq(0).attr("id", "defaultValue" + flag);
         flag++;
     }
 
     function deleteSelectedRow(rowId) {
-        console.log("删除: " + rowId);
         $("#" + rowId).remove();
     }
 
@@ -216,6 +216,7 @@
         var rowLength = $('#paramTable tr').length;
         for (var i = 1; i < rowLength; i++) {
             var paramJson = {};
+            //最后一行为按钮剔除
             if (i !== (rowLength - 1)) {
                 const row = document.getElementById('paramTable').rows[i];
                 paramJson.parentNode = $(row.cells[0]).children().eq(0).val();
@@ -223,12 +224,65 @@
                 paramJson.name = $(row.cells[2]).children().eq(0).val();
                 paramJson.type = $(row.cells[3]).children().eq(0).val();
                 paramJson.length = $(row.cells[4]).children().eq(0).val();
-                paramJson.isRequire = $(row.cells[5]).children().eq(0).val();
+                paramJson.description = $(row.cells[5]).children().eq(0).val();
+                paramJson.isRequire = $(row.cells[6]).children().eq(0).val();
+                paramJson.defaultValue = $(row.cells[7]).children().eq(0).val();
                 paramJsonArray.push(paramJson);
             }
         }
-        console.log(JSON.stringify(paramJsonArray));
         return JSON.stringify(paramJsonArray);
+    }
+
+    function jsonToTable(paramJsonArray) {
+        for (var i = 0; i < paramJsonArray.length; i++) {
+            insertNewRow();
+            //赋值
+            var rowId = 'row' + i;
+            $("#" + rowId + " td:eq(0)").children().eq(0).val(paramJsonArray[i].parentNode);
+            $("#" + rowId + " td:eq(1)").children().eq(0).val(paramJsonArray[i].id);
+            $("#" + rowId + " td:eq(2)").children().eq(0).val(paramJsonArray[i].name);
+            $("#" + rowId + " td:eq(3)").children().eq(0).val(paramJsonArray[i].type);
+            $("#" + rowId + " td:eq(4)").children().eq(0).val(paramJsonArray[i].length);
+            $("#" + rowId + " td:eq(5)").children().eq(0).val(paramJsonArray[i].description);
+            $("#" + rowId + " td:eq(6)").children().eq(0).val(paramJsonArray[i].isRequire);
+            $("#" + rowId + " td:eq(7)").children().eq(0).val(paramJsonArray[i].defaultValue);
+        }
+    }
+
+    function cleanTable(){
+        var rowLength = $('#paramTable tr').length;
+        for(var i = 0 ; i < rowLength - 1 ; i++){
+            var rowid = "row"+i;
+            deleteSelectedRow(rowid);
+        }
+        flag = 0;
+    }
+
+    //自动添加一些公共数据，方便测试人员更快添加模版
+    function demoData() {
+        var type = $("#messageType").val();
+        var insertStr = "";
+        if(type === "1"){
+            cleanTable();
+            insertStr = "[{\"parentNode\":\"\",\"id\":\"AIPG\",\"name\":\"根节点\",\"type\":\"String\",\"length\":\"1000\",\"description\":\"xml报文根节点\",\"isRequire\":\"Y\",\"defaultValue\":\"Object\"},{\"parentNode\":\"AIPG\",\"id\":\"INFO\",\"name\":\"二级节点\",\"type\":\"String\",\"length\":\"1000\",\"description\":\"xml报文INFO节点\",\"isRequire\":\"Y\",\"defaultValue\":\"Object\"},{\"parentNode\":\"AIPG\",\"id\":\"BODY\",\"name\":\"二级节点\",\"type\":\"String\",\"length\":\"1000\",\"description\":\"xml报文BODY节点\",\"isRequire\":\"Y\",\"defaultValue\":\"Object\"},{\"parentNode\":\"INFO\",\"id\":\"TRX_CODE\",\"name\":\"交易码\",\"type\":\"String\",\"length\":\"10\",\"description\":\"交易代码 固定值\",\"isRequire\":\"Y\",\"defaultValue\":\"100025\"},{\"parentNode\":\"INFO\",\"id\":\"VERSION\",\"name\":\"版本\",\"type\":\"String\",\"length\":\"5\",\"description\":\"版本号，固定值\",\"isRequire\":\"Y\",\"defaultValue\":\"2.2\"},{\"parentNode\":\"INFO\",\"id\":\"DATA_TYPE\",\"name\":\"报文类型\",\"type\":\"String\",\"length\":\"1\",\"description\":\"报文格式 固定值\",\"isRequire\":\"Y\",\"defaultValue\":\"0\"},{\"parentNode\":\"INFO\",\"id\":\"REQ_SN\",\"name\":\"流水号\",\"type\":\"String\",\"length\":\"40\",\"description\":\"请求流水号\",\"isRequire\":\"Y\",\"defaultValue\":\"${random}\"},{\"parentNode\":\"INFO\",\"id\":\"SIGNED_MSG\",\"name\":\"签名\",\"type\":\"String\",\"length\":\"500\",\"description\":\"签名值\",\"isRequire\":\"Y\",\"defaultValue\":\"signedMsg\"},{\"parentNode\":\"BODY\",\"id\":\"MERCHANT_ID\",\"name\":\"商户ID\",\"type\":\"String\",\"length\":\"20\",\"description\":\"商户编号\",\"isRequire\":\"Y\",\"defaultValue\":\"\"},{\"parentNode\":\"BODY\",\"id\":\"MERC_ORDER_NO\",\"name\":\"商户订单号\",\"type\":\"String\",\"length\":\"40\",\"description\":\"商户订单编号\",\"isRequire\":\"Y\",\"defaultValue\":\"${random}\"},{\"parentNode\":\"BODY\",\"id\":\"MERC_ORDER_DATE\",\"name\":\"交易日期\",\"type\":\"String\",\"length\":\"8\",\"description\":\"商户订单日期\",\"isRequire\":\"Y\",\"defaultValue\":\"${date8}\"}]";
+            var paramJsonArray = JSON.parse(insertStr);
+            jsonToTable(paramJsonArray);
+        }
+        if(type === "2"){
+            cleanTable();
+            insertStr = "[{\"parentNode\":\"\",\"id\":\"mercId\",\"name\":\"商户ID\",\"type\":\"String\",\"length\":\"20\",\"description\":\"商户编号\",\"isRequire\":\"Y\",\"defaultValue\":\"12345678\"},{\"parentNode\":\"\",\"id\":\"mercOrderNo\",\"name\":\"商户订单号\",\"type\":\"String\",\"length\":\"32\",\"description\":\"商户订单编号\",\"isRequire\":\"Y\",\"defaultValue\":\"${random}\"},{\"parentNode\":\"\",\"id\":\"mercOrderDate\",\"name\":\"商户订单日期\",\"type\":\"String\",\"length\":\"8\",\"description\":\"商户订单日期\",\"isRequire\":\"Y\",\"defaultValue\":\"${random8}\"},{\"parentNode\":\"\",\"id\":\"mercUserNo\",\"name\":\"商户用户号\",\"type\":\"String\",\"length\":\"20\",\"description\":\"商户订单日期\",\"isRequire\":\"Y\",\"defaultValue\":\"123456\"},{\"parentNode\":\"\",\"id\":\"bizContent\",\"name\":\"大字段\",\"type\":\"String\",\"length\":\"500\",\"description\":\"风控大字段，该字段参与加签时先进行BASE64编码，使用UTF-8字符集\",\"isRequire\":\"Y\",\"defaultValue\":\"Object\"},{\"parentNode\":\"bizContent\",\"id\":\"allowTransCardType\",\"name\":\"卡类型\",\"type\":\"Int\",\"length\":\"1\",\"description\":\"允许交易的卡类型: 1:仅支持借记卡2: 仅支持贷记卡3:全部\",\"isRequire\":\"Y\",\"defaultValue\":\"1\"},{\"parentNode\":\"bizContent\",\"id\":\"notifyUrl\",\"name\":\"通知地址\",\"type\":\"String\",\"length\":\"200\",\"description\":\"通知地址\",\"isRequire\":\"Y\",\"defaultValue\":\"www.baidu.com\"},{\"parentNode\":\"\",\"id\":\"sign\",\"name\":\"签名\",\"type\":\"String\",\"length\":\"1000\",\"description\":\"签名值\",\"isRequire\":\"Y\",\"defaultValue\":\"sign\"},{\"parentNode\":\"\",\"id\":\"cardNo\",\"name\":\"卡号\",\"type\":\"String\",\"length\":\"20\",\"description\":\"银行卡号\",\"isRequire\":\"Y\",\"defaultValue\":\"6212345\"},{\"parentNode\":\"\",\"id\":\"bankMobileNo\",\"name\":\"手机号\",\"type\":\"String\",\"length\":\"13\",\"description\":\"银行预留手机号\",\"isRequire\":\"Y\",\"defaultValue\":\"13000000000\"},{\"parentNode\":\"\",\"id\":\"idType\",\"name\":\"证件类型\",\"type\":\"String\",\"length\":\"2\",\"description\":\"证件类型：00:身份证  05:港澳通行证  06:台湾通行证  07:护照\",\"isRequire\":\"Y\",\"defaultValue\":\"00\"},{\"parentNode\":\"\",\"id\":\"bankAccountName\",\"name\":\"银行卡证件姓名\",\"type\":\"String\",\"length\":\"50\",\"description\":\"银行卡证件姓名\",\"isRequire\":\"Y\",\"defaultValue\":\"张三\"},{\"parentNode\":\"\",\"id\":\"idNo\",\"name\":\"证件号\",\"type\":\"String\",\"length\":\"18\",\"description\":\"一般为身份证号\",\"isRequire\":\"Y\",\"defaultValue\":\"110110110110110110\"},{\"parentNode\":\"\",\"id\":\"userName\",\"name\":\"证件姓名\",\"type\":\"String\",\"length\":\"20\",\"description\":\"身份证证件姓名\",\"isRequire\":\"N\",\"defaultValue\":\"张三\"}]";
+            var paramJsonArray = JSON.parse(insertStr);
+            jsonToTable(paramJsonArray);
+        }
+        if (type === "4") {
+            cleanTable();
+            insertStr = "[{\"parentNode\":\"\",\"id\":\"mercId\",\"name\":\"商户ID\",\"type\":\"String\",\"length\":\"20\",\"description\":\"商户编号\",\"isRequire\":\"Y\",\"defaultValue\":\"12345678\"},{\"parentNode\":\"\",\"id\":\"mercOrderNo\",\"name\":\"商户订单号\",\"type\":\"String\",\"length\":\"32\",\"description\":\"商户订单编号\",\"isRequire\":\"Y\",\"defaultValue\":\"${random}\"},\n" +
+                "{\"parentNode\":\"\",\"id\":\"platOrderNo\",\"name\":\"平台订单号\",\"type\":\"String\",\"length\":\"32\",\"description\":\"平台订单编号\",\"isRequire\":\"Y\",\"defaultValue\":\"${random}\"},\n" +
+                "{\"parentNode\":\"\",\"id\":\"transJrnNo\",\"name\":\"交易流水号\",\"type\":\"String\",\"length\":\"32\",\"description\":\"交易流水号\",\"isRequire\":\"Y\",\"defaultValue\":\"${random}\"},\n" +
+                "{\"parentNode\":\"\",\"id\":\"mercOrderDate\",\"name\":\"商户订单日期\",\"type\":\"String\",\"length\":\"8\",\"description\":\"商户订单日期\",\"isRequire\":\"Y\",\"defaultValue\":\"${random8}\"},{\"parentNode\":\"\",\"id\":\"cardNo\",\"name\":\"卡号\",\"type\":\"String\",\"length\":\"20\",\"description\":\"银行卡号\",\"isRequire\":\"Y\",\"defaultValue\":\"6212345\"},{\"parentNode\":\"\",\"id\":\"bankMobileNo\",\"name\":\"手机号\",\"type\":\"String\",\"length\":\"13\",\"description\":\"银行预留手机号\",\"isRequire\":\"Y\",\"defaultValue\":\"13000000000\"},{\"parentNode\":\"\",\"id\":\"idType\",\"name\":\"证件类型\",\"type\":\"String\",\"length\":\"2\",\"description\":\"证件类型：00:身份证  05:港澳通行证  06:台湾通行证  07:护照\",\"isRequire\":\"Y\",\"defaultValue\":\"00\"},{\"parentNode\":\"\",\"id\":\"bankAccountName\",\"name\":\"银行卡证件姓名\",\"type\":\"String\",\"length\":\"50\",\"description\":\"银行卡证件姓名\",\"isRequire\":\"Y\",\"defaultValue\":\"张三\"},{\"parentNode\":\"\",\"id\":\"idNo\",\"name\":\"证件号\",\"type\":\"String\",\"length\":\"18\",\"description\":\"一般为身份证号\",\"isRequire\":\"Y\",\"defaultValue\":\"110110110110110110\"},{\"parentNode\":\"\",\"id\":\"userName\",\"name\":\"证件姓名\",\"type\":\"String\",\"length\":\"20\",\"description\":\"身份证证件姓名\",\"isRequire\":\"N\",\"defaultValue\":\"张三\"}]";
+            var paramJsonArray = JSON.parse(insertStr);
+            jsonToTable(paramJsonArray);
+        }
     }
 
     function submitHandler() {

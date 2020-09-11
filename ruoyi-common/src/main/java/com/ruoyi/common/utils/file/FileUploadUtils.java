@@ -125,7 +125,11 @@ public class FileUploadUtils
     {
         String fileName = file.getOriginalFilename();
         String extension = getExtension(file);
-        fileName = DateUtils.datePath() + "/" + encodingFilename(fileName) + "." + extension;
+        if ("jar".equals(extension)) {
+            fileName = DateUtils.datePath() + "/" + fileName;
+        } else {
+            fileName = DateUtils.datePath() + "/" + encodingFilename(fileName) + "." + extension;
+        }
         return fileName;
     }
 
@@ -152,6 +156,9 @@ public class FileUploadUtils
         return pathFileName;
     }
 
+    public static final String getFileFullPath(String baseDir, String pathInDatabase) {
+        return StringUtils.replace(pathInDatabase, Constants.RESOURCE_PREFIX, baseDir);
+    }
     /**
      * 编码文件名
      */

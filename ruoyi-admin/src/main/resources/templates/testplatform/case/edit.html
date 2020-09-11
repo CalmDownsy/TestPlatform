@@ -17,16 +17,71 @@
             <div class="form-group">    
                 <label class="col-sm-3 control-label">所属接口：</label>
                 <div class="col-sm-8">
-                    <input class="form-control" type="text" onclick="selectInterfaceTable()" id="interfaceName"
+                    <input class="form-control" type="text" id="interfaceName"
                            name="interfaceName" readonly="true"/>
                     <input class="form-control" type="hidden" id="interfaceId" name="interfaceId"
                            th:field="*{interfaceId}"/>
                 </div>
             </div>
-            <div class="form-group">    
+            <div class="form-group" hidden="true">
                 <label class="col-sm-3 control-label">用例实参：</label>
                 <div class="col-sm-8">
                     <input name="parameterJson" th:field="*{parameterJson}" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">用例实参：</label>
+                <div class="col-sm-8">
+                    <table id="paramTable" class="table">
+                        <thead>
+                        <tr>
+                            <th>节点</th>
+                            <th>字段ID</th>
+                            <th>字段名称</th>
+                            <th>类型</th>
+                            <th>是否必须</th>
+                            <th>Value</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">是否加签：</label>
+                    <div class="col-sm-8">
+                        <div class="radio-box">
+                            <label>
+                                <input type="radio" value="1" th:field="*{isSign}" name="isSign">是</label>
+                        </div>
+                        <div class="radio-box">
+                            <label>
+                                <input type="radio" value="2" th:field="*{isSign}" name="isSign">否</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">加签证书：</label>
+                <div class="col-sm-8">
+                    <select name="certId" id="certId" class="form-control">
+                        <option value="0">请选择证书</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">是否加密：</label>
+                <div class="col-sm-8">
+                    <div class="radio-box">
+                        <label>
+                            <input type="radio" value="1" th:field="*{isEncrypted}" name="isEncrypted">是</label>
+                    </div>
+                    <div class="radio-box">
+                        <label>
+                            <input type="radio" value="2" th:field="*{isEncrypted}" name="isEncrypted">否</label>
+                    </div>
                 </div>
             </div>
             <div class="form-group">    
@@ -66,7 +121,7 @@
             <div class="form-group">    
                 <label class="col-sm-3 control-label">校验表达式：</label>
                 <div class="col-sm-8">
-                    <textarea name="checkExpression" th:field="*{checkExpression}" class="form-control" type="text" rows="3"></textarea>
+                    <textarea name="checkExpression" th:field="*{checkExpression}" class="form-control" type="text" rows="3" placeholder="输入需要校验的'K=V'形式的校验表达式，支持多个表达式，多个表达式间请用英文','隔开。"></textarea>
                 </div>
             </div>
             <div class="form-group">    
@@ -78,23 +133,220 @@
                     </div>
                 </div>
             </div>
+            <div class="form-group" hidden="true">
+                <label class="col-sm-3 control-label">前置动作：</label>
+                <div >
+                    <input type="text" class="form-control" name="actionDetail" th:field="*{actionDetail}"/>
+                </div>
+            </div>
+            <div class="form-group" id="caseAction" hidden="true">
+                <label class="col-sm-3 control-label">前置用例：</label>
+                <div class="col-sm-8">
+                    <input class="form-control" type="text" onclick="selectCaseTable()" id="caseBoxName"
+                           name="caseBoxName" readonly="true" placeholder="请选择接用例"/>
+                    <input class="form-control" type="hidden" id="caseBox" name="caseBox"/><br/>
+                    <input class="form-control" type="text" id="targetKey" name="targetKey" placeholder="请输入执行用例后的目标字段名，多个目标字段可用英文','隔开，可空" />
+                </div>
+            </div>
+            <div class="form-group" id="sqlAction" hidden="true">
+                <label class="col-sm-3 control-label">前置sql：</label>
+                <div class="col-sm-8">
+                    <select name="targetbase" id="targetbase" class="form-control m-b" th:with="type=${@dict.getType('outbase_tag')}" required>
+                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                    </select><br/>
+                    <input type="text" class="form-control" id="targetSql" name="targetSql" placeholder="请输入需要执行的sql"/><br/>
+                    <input type="text" class="form-control" id="targetSqlKey" name="targetSqlKey" placeholder="请输入需要获取的数据库字段名称，可空"/>
+                </div>
+            </div>
+            <div class="form-group" id="sleepAction" hidden="true">
+                <label class="col-sm-3 control-label">等待时长：</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" id="targetTime" name="targetTime" placeholder="单位为秒" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">备注：</label>
+                <div class="col-sm-8">
+                    <textarea id="remark" name="remark" th:field="*{remark}" maxlength="500" class="form-control" rows="3"></textarea>
+                </div>
+            </div>
         </form>
     </div>
     <th:block th:include="include :: footer" />
     <th:block th:include="include :: datetimepicker-js" />
-    <script type="text/javascript">
+    <script type="text/javascript" th:inline="javascript">
         var prefix = ctx + "testplatform/case";
+        var cerurl = ctx +"testplatform/testcertmgt/certlist";
+        var testCase = [[${testCase}]];
         $("#form-case-edit").validate({
             focusCleanup: true
         });
 
         function submitHandler() {
+            getParamJson();
+            var actionDetailStr = "";
+            var preActionId = $("input[name='preActionId']:checked").val();
+            if(preActionId == "1"){
+                var targetCaseName = $("#caseBoxName").val();
+                var targetCase = $("#caseBox").val();
+                var targetkey = $("#targetKey").val();
+                if(targetCase.indexOf(",") == -1){
+                    actionDetailStr = "{\"preCaseId\":"+targetCase+",\"preCaseName\":\""+targetCaseName+"\",\"targetKey\":\""+targetkey+"\"}";
+                }else{
+                    $.modal.alert("前置用例只能有一个，请重新选择");
+                    return;
+                }
+            }
+            if(preActionId == "2"){
+                var targetbase = $("#targetbase").val();
+                var targetsql = $("#targetSql").val();
+                var targetsqlkey = $("#targetSqlKey").val();
+                if(targetsql != "" && targetbase != ""){
+                    actionDetailStr = "{\"targetBase\":\""+targetbase+"\",\"sql\":\""+targetsql+"\",\"targetSqlKey\":\""+targetsqlkey+"\"}";
+                }else{
+                    $.modal.alert("前置sql未填写或执行库未指定，请注意");
+                    return;
+                }
+            }
+            if(preActionId == "3"){
+                var sleeptime = $("#targetTime").val();
+                actionDetailStr = "{\"targetTime\":\""+sleeptime+"\"}";
+            }
+            $("#actionDetail").attr("value",actionDetailStr);
             if ($.validate.form()) {
+                console.log("是否加签：" + $('input[name="isSign"]:checked').val());
+                // if ($('input[name="isSign"]:checked').val() == "2") {
+                //     $("#certId").val(0)
+                // }
                 $.operate.save(prefix + "/edit", $('#form-case-edit').serialize());
             }
         }
         function selectInterfaceTable() {
             $.modal.open("选择接口", ctx + "testplatform/interface/selectInterfaceTable")
+        }
+
+        function selectCaseTable() {
+            $.modal.open("选择用例", ctx + "testplatform/case/selectCaseTable")
+        }
+
+        //根据前置动作类型，切换页面展示的数据收集块
+        function showActionDiv(){
+            var preActionId = $("input[name='preActionId']:checked").val();
+            if(preActionId == "1"){
+                $("#caseAction").show();
+                $("#sqlAction").hide();
+                $("#sleepAction").hide();
+            }
+            if(preActionId == "2"){
+                $("#caseAction").hide();
+                $("#sqlAction").show();
+                $("#sleepAction").hide();
+            }
+            if(preActionId == "3"){
+                $("#caseAction").hide();
+                $("#sqlAction").hide();
+                $("#sleepAction").show();
+            }
+            if(preActionId == "4"){
+                $("#caseAction").hide();
+                $("#sqlAction").hide();
+                $("#sleepAction").hide();
+            }
+            setTimeout(showActionDiv,300);
+        }
+
+        var flag = 0;
+
+        function insertNewRow() {
+            var rowLength = $('#paramTable tr').length;
+            var rowId = "row" + flag;
+            var insertStr = "<tr id=" + rowId + ">\n" +
+                "                            <td style=\"width: 12%\">\n" +
+                "                                <input class=\"form-control\" type=\"text\" readonly=\"true\">\n" +
+                "                            </td>\n" +
+                "                            <td>\n" +
+                "                                <input class=\"form-control\" type=\"text\" readonly=\"true\">\n" +
+                "                            </td>\n" +
+                "                            <td>\n" +
+                "                                <input class=\"form-control\" type=\"text\" readonly=\"true\">\n" +
+                "                            </td>\n" +
+                "                            <td>\n" +
+                "                                <select class=\"form-control noselect2 selectpicker\">\n" +
+                "                                    <option value=\"String\">String</option>\n" +
+                "                                    <option value=\"Int\">Int</option>\n" +
+                "                                    <option value=\"Number\">Number</option>\n" +
+                "                                </select>\n" +
+                "                            </td>\n" +
+                "                            <td style=\"width: 10%;\" >\n" +
+                "                                <input class=\"form-control\" type=\"text\" readonly=\"true\">\n" +
+                "                            </td>\n" +
+                "                            <td style=\"width: 20%;\">\n" +
+                "                                <input class=\"form-control\" type=\"text\">\n" +
+                "                            </td>\n" +
+                "                        </tr>";
+            $("#paramTable tr:eq(" + ((rowLength - 1)) + ")").after(insertStr);
+            $("#" + rowId + " td:eq(0)").children().eq(0).attr("id", "parent" + flag);
+            $("#" + rowId + " td:eq(1)").children().eq(0).attr("id", "id" + flag);
+            $("#" + rowId + " td:eq(2)").children().eq(0).attr("id", "name" + flag);
+            $("#" + rowId + " td:eq(3)").children().eq(0).attr("id", "type" + flag);
+            $("#" + rowId + " td:eq(4)").children().eq(0).attr("id", "require" + flag);
+            $("#" + rowId + " td:eq(5)").children().eq(0).attr("id", "value" + flag);
+            flag++;
+        }
+        //展示当前接口的参数
+        function showParams() {
+            var paramJsonArray = JSON.parse($('#parameterJson').val());
+            for (var i = 0; i < paramJsonArray.length; i++) {
+                insertNewRow();
+                //赋值
+                var rowId = 'row' + i;
+                $("#" + rowId + " td:eq(0)").children().eq(0).val(paramJsonArray[i].parentNode);
+                $("#" + rowId + " td:eq(1)").children().eq(0).val(paramJsonArray[i].id);
+                $("#" + rowId + " td:eq(2)").children().eq(0).val(paramJsonArray[i].name);
+                $("#" + rowId + " td:eq(3)").children().eq(0).val(paramJsonArray[i].type);
+                $("#" + rowId + " td:eq(4)").children().eq(0).val(paramJsonArray[i].isRequire);
+                $("#" + rowId + " td:eq(5)").children().eq(0).val(paramJsonArray[i].value);
+            }
+            var preActionId = testCase.preActionId;
+            var actionDetailStr = testCase.actionDetail;
+            if(preActionId == 1 && actionDetailStr != ""){
+                actionDetailStr = JSON.parse(actionDetailStr);
+                $("#caseBoxName").val(actionDetailStr.preCaseName);
+                $("#caseBox").val(actionDetailStr.preCaseId);
+                $("#targetKey").val(actionDetailStr.targetKey);
+            }
+            if(preActionId == 2 && actionDetailStr != ""){
+                actionDetailStr = JSON.parse(actionDetailStr);
+                $("#targetbase").val(actionDetailStr.targetBase);
+                $("#targetSql").val(actionDetailStr.sql);
+                $("#targetSqlKey").val(actionDetailStr.targetSqlKey);
+            }
+            if(preActionId == 3 && actionDetailStr != ""){
+                actionDetailStr = JSON.parse(actionDetailStr);
+                $("#targetTime").val(actionDetailStr.targetTime);
+            }
+        }
+
+        //参数table数据转为json数组
+        function getParamJson() {
+            var paramJsonArray = [];
+            var rowLength = $('#paramTable tr').length;
+            for (var i = 1; i < rowLength; i++) {
+                var paramJson = {};
+                const row = document.getElementById('paramTable').rows[i];
+                var value = $(row.cells[5]).children().eq(0).val();
+                //value为空则不组装此参数
+                if ($.common.isNotEmpty(value)) {
+                    paramJson.parentNode = $(row.cells[0]).children().eq(0).val();
+                    paramJson.id = $(row.cells[1]).children().eq(0).val();
+                    paramJson.name = $(row.cells[2]).children().eq(0).val();
+                    paramJson.type = $(row.cells[3]).children().eq(0).val();
+                    paramJson.isRequire = $(row.cells[4]).children().eq(0).val();
+                    paramJson.value = value;
+                    paramJsonArray.push(paramJson);
+                }
+            }
+            $('#parameterJson').attr("value",JSON.stringify(paramJsonArray));
         }
 
         function selectById(interfaceId) {
@@ -116,8 +368,27 @@
             return interfaceName;
         }
 
+        //加载证书下拉菜单
+        $(function(){
+            $.ajax({
+                url: cerurl,
+                type: "post",
+                success: function (data) {
+                    for(var i = 0; i < data.length ; i++ ){
+                        if(testCase.certId == data[i].id){
+                            $("#certId").append("<option value="+data[i].id+" selected>"+data[i].certFilename+"</option>");
+                        } else{
+                            $("#certId").append("<option value="+data[i].id+">"+data[i].certFilename+"</option>");
+                        }
+                    }
+                }
+            })
+        });
+
         $(function () {
             $('#interfaceName').val(selectById($('#interfaceId').val()));
+            showParams();
+            $('input[name="preActionId"]').on('ifChecked',showActionDiv());
         })
     </script>
 </body>

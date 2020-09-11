@@ -26,24 +26,28 @@ public class TestInterfaceInfo extends BaseEntity
     @Excel(name = "接口中文名称")
     private String interfaceChName;
 
+    /** 接口所属环境名称 */
+    @Excel(name = "接口所属环境名称")
+    private String envNameLink;
+
     /** 请求路径 */
     @Excel(name = "请求路径")
     private String requestUrl;
 
     /** 接口分类（收、付、退、鉴权等） */
-    @Excel(name = "接口分类", readConverterExp = "收=、付、退、鉴权等")
+    @Excel(name = "接口分类", readConverterExp = "收、付、退、鉴权等")
     private String interfaceType;
 
     /** 接口协议（http、https、dubbo） */
-    @Excel(name = "接口协议", readConverterExp = "h=ttp、https、dubbo")
+    @Excel(name = "接口协议", readConverterExp = "http、https、dubbo")
     private String interfaceProtocol;
 
     /** 请求类型（协议http(s)时，为post、get等） */
-    @Excel(name = "请求类型", readConverterExp = "协=议http(s)时，为post、get等")
+    @Excel(name = "请求类型", readConverterExp = "协议http(s)时，为post、get等")
     private String requestType;
 
     /** 接口状态（1：正常；2：禁用） */
-    @Excel(name = "接口状态", readConverterExp = "1=：正常；2：禁用")
+    @Excel(name = "接口状态", readConverterExp = "1：正常；2：禁用")
     private String status;
 
     public void setInterfaceId(Long interfaceId) 
@@ -119,12 +123,21 @@ public class TestInterfaceInfo extends BaseEntity
         return status;
     }
 
+    public String getEnvNameLink() {
+        return envNameLink;
+    }
+
+    public void setEnvNameLink(String envNameLink) {
+        this.envNameLink = envNameLink;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("interfaceId", getInterfaceId())
             .append("interfaceName", getInterfaceName())
             .append("interfaceChName", getInterfaceChName())
+            .append("envNameLink", getEnvNameLink())
             .append("requestUrl", getRequestUrl())
             .append("interfaceType", getInterfaceType())
             .append("interfaceProtocol", getInterfaceProtocol())

@@ -16,14 +16,62 @@
         <result property="updateBy" column="update_by"/>
         <result property="updateTime" column="update_time"/>
         <result property="remark" column="remark"/>
+        <result property="busiLine" column="busi_line"/>
+        <result property="dbType" column="db_type"/>
     </resultMap>
 
+    <select id="selectWorkOrderReportList" parameterType="com.ulpay.testplatform.domain.WorkOrderReportRequest"
+            resultMap="WorkOrderReportResult">
+        SELECT
+        date_format(w.start_time, '%Y-%u') week_time, w.work_order_type, count(work_order_type) count
+        <if test="busiLine != null">
+            ,w.busi_line
+        </if>
+        FROM workorder w
+        WHERE 1=1
+        <if test="beginTime != null">
+            and date_format(w.start_time, '%y%m%d') >= date_format(#{beginTime}, '%y%m%d')
+        </if>
+        <if test="endTime != null">
+            and date_format(#{endTime}, '%y%m%d') >= date_format(w.start_time, '%y%m%d')
+        </if>
+        <if test="busiLine != null and busiLine != ''">
+            and busi_line = #{busiLine}
+        </if>
+        <if test="workOrderType != null and workOrderType != ''">
+            and work_order_type = #{workOrderType}
+            <!--            <foreach collection="array" item="workOrderType" open="(" separator="," close=")">-->
+            <!--                #{workOrderType}-->
+            <!--            </foreach>-->
+        </if>
+        GROUP BY
+        week_time,
+        w.work_order_type
+        <if test="busiLine != null">
+            ,w.busi_line
+        </if>
+
+        ORDER BY week_time
+    </select>
+
     <sql id="selectWorkOrderVo">
-        select w.work_order_id, w.work_order_num, w.work_order_name, w.work_order_type, w.status,
-            w.start_time, w.end_time, w.create_time, w.create_by, w.remark from workorder w
+        select w.work_order_id,
+               w.work_order_num,
+               w.work_order_name,
+               w.work_order_type,
+               w.status,
+               w.start_time,
+               w.end_time,
+               w.create_time,
+               w.create_by,
+               w.remark,
+               w.busi_line,
+               w.db_type
+        from workorder w
     </sql>
 
-    <select id="selectWorkOrderList" parameterType="com.ulpay.testplatform.domain.WorkOrder" resultMap="WorkOrderResult">
+    <select id="selectWorkOrderList" parameterType="com.ulpay.testplatform.domain.WorkOrder"
+            resultMap="WorkOrderResult">
         <include refid="selectWorkOrderVo"/>
         where 1 = 1
         <if test="workOrderNum != null and workOrderNum != ''">
@@ -35,16 +83,26 @@
         <if test="workOrderType != null and workOrderType != ''">
             and w.work_order_type = #{workOrderType}
         </if>
+        <if test="busiLine != null and busiLine != ''">
+            and w.busi_line = #{busiLine}
+        </if>
         <if test="status != null and status != ''">
             and status = #{status}
         </if>
         <if test="params.beginTime != null and params.beginTime != ''">
-            and date_format(w.create_time, '%y%m%d') &gt;= date_format(#{params.beginTime}, '%y%m%d')
+            and date_format(w.start_time, '%y%m%d') &gt;= date_format(#{params.beginTime}, '%y%m%d')
         </if>
         <if test="params.endTime != null and params.endTime != ''">
-            and date_format(w.create_time, '%y%m%d') &lt;= date_format(#{params.endTime}, '%y%m%d')
+            and date_format(w.start_time, '%y%m%d') &lt;= date_format(#{params.endTime}, '%y%m%d')
         </if>
     </select>
+
+    <resultMap id="WorkOrderReportResult" type="com.ulpay.testplatform.domain.WorkOrderReportData">
+        <result property="weekTime" column="week_time"/>
+        <result property="workOrderType" column="work_order_type"/>
+        <result property="count" column="count"/>
+        <result property="busiLine" column="busi_line"/>
+    </resultMap>
 
     <select id="selectWorkOrderById" parameterType="long" resultMap="WorkOrderResult">
         <include refid="selectWorkOrderVo"/>
@@ -58,8 +116,10 @@
             <if test="workOrderName != null and workOrderName != ''">work_order_name = #{workOrderName},</if>
             <if test="workOrderType != null and workOrderType != ''">work_order_type = #{workOrderType},</if>
             <if test="status != null and status != ''">status = #{status},</if>
-            #           日期格式不能 != ''
+            # 日期格式不能 != ''
             <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="busiLine != null">busi_line = #{busiLine},</if>
+            <if test="dbType != null">db_type = #{dbType},</if>
             <if test="endTime != null">end_time = #{endTime},</if>
             <if test="remark != null and remark != ''">remark = #{remark},</if>
             <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
@@ -68,30 +128,35 @@
         where work_order_id = #{workOrderId}
     </update>
 
-    <insert id="insertWorkOrder" parameterType="com.ulpay.testplatform.domain.WorkOrder" useGeneratedKeys="true" keyProperty="workOrderId">
+    <insert id="insertWorkOrder" parameterType="com.ulpay.testplatform.domain.WorkOrder" useGeneratedKeys="true"
+            keyProperty="workOrderId">
         insert into workorder(
-          <if test="workOrderId != null and workOrderId != 0">work_order_id,</if>
-          <if test="workOrderNum != null and workOrderNum != ''">work_order_num,</if>
-          <if test="workOrderName != null and workOrderName != ''">work_order_name,</if>
-          <if test="workOrderType != null and workOrderType != ''">work_order_type,</if>
-          <if test="status != null and status != ''">status,</if>
-#           日期格式不能 != ''
-          <if test="startTime != null">start_time,</if>
-          <if test="endTime != null">end_time,</if>
-          <if test="remark != null and remark != ''">remark,</if>
-          <if test="createBy != null and createBy != ''">create_by,</if>
-          create_time
+        <if test="workOrderId != null and workOrderId != 0">work_order_id,</if>
+        <if test="workOrderNum != null and workOrderNum != ''">work_order_num,</if>
+        <if test="workOrderName != null and workOrderName != ''">work_order_name,</if>
+        <if test="workOrderType != null and workOrderType != ''">work_order_type,</if>
+        <if test="status != null and status != ''">status,</if>
+        <if test="busiLine != null and busiLine != ''">busi_line,</if>
+        <if test="dbType != null and dbType != ''">db_type,</if>
+        # 日期格式不能 != ''
+        <if test="startTime != null">start_time,</if>
+        <if test="endTime != null">end_time,</if>
+        <if test="remark != null and remark != ''">remark,</if>
+        <if test="createBy != null and createBy != ''">create_by,</if>
+        create_time
         ) values (
-            <if test="workOrderId != null and workOrderId != 0">#{workOrderId},</if>
-            <if test="workOrderNum != null and workOrderNum != ''">#{workOrderNum},</if>
-            <if test="workOrderName != null and workOrderName != ''">#{workOrderName},</if>
-            <if test="workOrderType != null and workOrderType != ''">#{workOrderType},</if>
-            <if test="status != null and status != ''">#{status},</if>
-            <if test="startTime != null">#{startTime},</if>
-            <if test="endTime != null">#{endTime},</if>
-            <if test="remark != null and remark != ''">#{remark},</if>
-            <if test="createBy != null and createBy != ''">#{createBy},</if>
-            sysdate()
+        <if test="workOrderId != null and workOrderId != 0">#{workOrderId},</if>
+        <if test="workOrderNum != null and workOrderNum != ''">#{workOrderNum},</if>
+        <if test="workOrderName != null and workOrderName != ''">#{workOrderName},</if>
+        <if test="workOrderType != null and workOrderType != ''">#{workOrderType},</if>
+        <if test="status != null and status != ''">#{status},</if>
+        <if test="busiLine != null and busiLine != ''">#{busiLine},</if>
+        <if test="dbType != null and dbType != ''">#{dbType},</if>
+        <if test="startTime != null">#{startTime},</if>
+        <if test="endTime != null">#{endTime},</if>
+        <if test="remark != null and remark != ''">#{remark},</if>
+        <if test="createBy != null and createBy != ''">#{createBy},</if>
+        sysdate()
         )
     </insert>
 
