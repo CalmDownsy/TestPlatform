@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ulpay.testplatform.mapper.JobResultRelationsMapper">
+    
+    <resultMap type="com.ulpay.testplatform.domain.JobResultRelations" id="JobResultRelationsResult">
+        <result property="relId"    column="rel_id"    />
+        <result property="jobType"    column="job_type"    />
+        <result property="jobId"    column="job_id"    />
+        <result property="jobName"    column="job_name"    />
+        <result property="testUser"    column="test_user"    />
+        <result property="jobStatus"    column="job_status"    />
+        <result property="jobRunTime"    column="job_run_time"    />
+        <result property="jobResults"    column="job_results"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectJobResultRelationsVo">
+        select rel_id, job_type, job_id, job_name, test_user, job_status, job_run_time, job_results, remark from job_result_relations
+    </sql>
+
+    <select id="selectJobResultRelationsList" parameterType="com.ulpay.testplatform.domain.JobResultRelations" resultMap="JobResultRelationsResult">
+        <include refid="selectJobResultRelationsVo"/>
+        <where>  
+            <if test="jobType != null "> and job_type = #{jobType}</if>
+            <if test="jobId != null "> and job_id = #{jobId}</if>
+            <if test="jobName != null  and jobName != ''"> and job_name like concat('%', #{jobName}, '%')</if>
+            <if test="testUser != null  and testUser != ''"> and test_user like concat('%', #{testUser}, '%')</if>
+            <if test="jobRunTime != null "> and job_run_time = #{jobRunTime}</if>
+            <if test="beginJobRunTime != null "> and job_run_time &gt;= #{beginJobRunTime}</if>
+            <if test="endJobRunTime != null "> and job_run_time &lt;= #{endJobRunTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectJobResultRelationsById" parameterType="Long" resultMap="JobResultRelationsResult">
+        <include refid="selectJobResultRelationsVo"/>
+        where rel_id = #{relId}
+    </select>
+        
+    <insert id="insertJobResultRelations" parameterType="com.ulpay.testplatform.domain.JobResultRelations" useGeneratedKeys="true" keyProperty="relId">
+        insert into job_result_relations
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="jobType != null ">job_type,</if>
+            <if test="jobId != null ">job_id,</if>
+            <if test="jobName != null ">job_name,</if>
+            <if test="testUser != null  and testUser != ''">test_user,</if>
+            <if test="jobStatus != null ">job_status,</if>
+            <if test="jobRunTime != null ">job_run_time,</if>
+            <if test="jobResults != null  and jobResults != ''">job_results,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="jobType != null ">#{jobType},</if>
+            <if test="jobId != null ">#{jobId},</if>
+            <if test="jobName != null ">#{jobName},</if>
+            <if test="testUser != null  and testUser != ''">#{testUser},</if>
+            <if test="jobStatus != null ">#{jobStatus},</if>
+            <if test="jobRunTime != null ">#{jobRunTime},</if>
+            <if test="jobResults != null  and jobResults != ''">#{jobResults},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateJobResultRelations" parameterType="com.ulpay.testplatform.domain.JobResultRelations">
+        update job_result_relations
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="jobType != null ">job_type = #{jobType},</if>
+            <if test="jobId != null ">job_id = #{jobId},</if>
+            <if test="jobName != null ">job_name = #{jobName},</if>
+            <if test="testUser != null  and testUser != ''">test_user = #{testUser},</if>
+            <if test="jobStatus != null ">job_status = #{jobStatus},</if>
+            <if test="jobRunTime != null ">job_run_time = #{jobRunTime},</if>
+            <if test="jobResults != null  and jobResults != ''">job_results = #{jobResults},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+        </trim>
+        where rel_id = #{relId}
+    </update>
+
+    <delete id="deleteJobResultRelationsById" parameterType="Long">
+        delete from job_result_relations where rel_id = #{relId}
+    </delete>
+
+    <delete id="deleteJobResultRelationsByIds" parameterType="String">
+        delete from job_result_relations where rel_id in 
+        <foreach item="relId" collection="array" open="(" separator="," close=")">
+            #{relId}
+        </foreach>
+    </delete>
+    
+</mapper>

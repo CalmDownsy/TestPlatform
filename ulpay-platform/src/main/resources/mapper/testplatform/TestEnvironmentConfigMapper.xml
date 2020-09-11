@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ulpay.testplatform.mapper.TestEnvironmentConfigMapper">
+    
+    <resultMap type="com.ulpay.testplatform.domain.TestEnvironmentConfig" id="TestEnvironmentConfigResult">
+        <result property="id"    column="id"    />
+        <result property="envFlag"    column="env_flag"    />
+        <result property="envName"    column="env_name"    />
+        <result property="host"    column="host"    />
+        <result property="port"    column="port"    />
+        <result property="groups"    column="groups"    />
+        <result property="description"    column="description"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectTestEnvironmentConfigVo">
+        select id, env_flag, env_name, host, port, groups, description, create_by, create_time, update_by, update_time, remark from test_environment_config
+    </sql>
+
+    <select id="selectTestEnvironmentConfigList" parameterType="com.ulpay.testplatform.domain.TestEnvironmentConfig" resultMap="TestEnvironmentConfigResult">
+        <include refid="selectTestEnvironmentConfigVo"/>
+        <where>
+            <if test="envFlag != null  and envFlag != ''"> and env_flag = #{envFlag}</if>
+            <if test="envName != null  and envName != ''"> and env_name like concat('%', #{envName}, '%')</if>
+            <if test="host != null  and host != ''"> and host = #{host}</if>
+            <if test="port != null  and port != ''"> and port = #{port}</if>
+            <if test="groups != null  and groups != ''"> and groups = #{groups}</if>
+            <if test="description != null  and description != ''"> and description like concat('%', #{description}, '%')</if>
+        </where>
+    </select>
+
+    <select id="selectDistinctEnvNameList" resultMap="TestEnvironmentConfigResult">
+        select DISTINCT(env_name) from test_environment_config
+    </select>
+    
+    <select id="selectTestEnvironmentConfigById" parameterType="Integer" resultMap="TestEnvironmentConfigResult">
+        <include refid="selectTestEnvironmentConfigVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertTestEnvironmentConfig" parameterType="com.ulpay.testplatform.domain.TestEnvironmentConfig">
+        insert into test_environment_config
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">id,</if>
+            <if test="envFlag != null ">env_flag,</if>
+            <if test="envName != null  and envName != ''">env_name,</if>
+            <if test="host != null  and host != ''">host,</if>
+            <if test="port != null  and port != ''">port,</if>
+            <if test="groups != null  and groups != ''">groups,</if>
+            <if test="description != null  and description != ''">description,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null ">#{id},</if>
+            <if test="envFlag != null ">#{envFlag},</if>
+            <if test="envName != null  and envName != ''">#{envName},</if>
+            <if test="host != null  and host != ''">#{host},</if>
+            <if test="port != null  and port != ''">#{port},</if>
+            <if test="groups != null  and groups != ''">#{groups},</if>
+            <if test="description != null  and description != ''">#{description},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTestEnvironmentConfig" parameterType="com.ulpay.testplatform.domain.TestEnvironmentConfig">
+        update test_environment_config
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="envFlag != null  and envFlag != ''">env_flag = #{envFlag},</if>
+            <if test="envName != null  and envName != ''">env_name = #{envName},</if>
+            <if test="host != null  and host != ''">host = #{host},</if>
+            <if test="port != null  and port != ''">port = #{port},</if>
+            <if test="groups != null  and groups != ''">groups = #{groups},</if>
+            <if test="description != null  and description != ''">description = #{description},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTestEnvironmentConfigById" parameterType="Integer">
+        delete from test_environment_config where id = #{id}
+    </delete>
+
+    <delete id="deleteTestEnvironmentConfigByIds" parameterType="String">
+        delete from test_environment_config where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

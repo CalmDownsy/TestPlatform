@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('执行用例')"/>
+    <th:block th:include="include :: select2-css"/>
+    <th:block th:include="include :: bootstrap-select-css"/>
+</head>
+<body>
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-case-run" th:object="${testCase}">
+        <input name="caseId" id="caseId" th:field="*{caseId}" type="hidden">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">用例名称：</label>
+            <div class="col-sm-7">
+                <input name="caseName" th:field="*{caseName}" class="form-control" type="text" readonly="true">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">执行环境：</label>
+            <div class="col-sm-7">
+                <select class="form-control" id="envList" th:with="type=${@dict.getType('env_flag')}">
+                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:selected="${dict.default}"></option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">校验表达式：</label>
+            <div class="col-sm-7">
+                <textarea name="checkExpression" th:field="*{checkExpression}" class="form-control" type="text"
+                          rows="3" readonly="true"></textarea>
+            </div>
+        </div>
+    </form>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: select2-js"/>
+<th:block th:include="include :: bootstrap-select-js"/>
+<script th:inline="javascript">
+    var prefix = ctx + 'testplatform/case';
+
+    function getEnvList() {
+        var envList = [];
+        $.ajax({
+            url: ctx + 'testplatform/envconf/getEnvconfList',
+            type: 'post',
+            data: {},
+            async: false,
+            error: function () {
+                $.modal.alertError("系统异常");
+            },
+            success: function (response) {
+                envList = response;
+            }
+        });
+        return envList;
+    }
+
+//    //可用环境下拉选
+//    $(function () {
+//        var envList = getEnvList();
+//        for (var i = 0; i < envList.length; i++) {
+//            $('#envList').append('<option value="' + envList[i].host + ':' + envList[i].port + '">' +
+//                '[' + envList[i].envName + ']</h4>' + envList[i].host + ':' + envList[i].port + '</option>')
+//        }
+//    });
+
+    //提交表单
+    function submitHandler() {
+        if ($.validate.form()) {
+            // alert($('#envList').val());
+            $.modal.confirm("确认执行此用例吗?", function () {
+                runCase()
+            });
+        }
+    }
+
+
+    //执行用例
+    function runCase() {
+        var config = {
+            url: prefix + '/runCase',
+            type: 'post',
+            dataType: 'json',
+            data: {
+                'caseId': $('#caseId').val(),
+                'envConf': $('#envList').val()
+            },
+            beforeSend: function () {
+                $.modal.loading("正在执行中，请稍后...");
+            },
+            success: function (result) {
+                if (result.code === web_status.SUCCESS) {
+                    showRunResult(result);
+                } else if (result.code === web_status.FAIL) {
+                    $.modal.alertWarning(result.msg)
+                }
+                $.modal.closeLoading();
+            },
+            error: function () {
+                $.modal.alertError('系统异常');
+            }
+        };
+        $.ajax(config);
+    }
+
+    //展示执行结果
+    function showRunResult(result) {
+        var options = {
+            title: result.data.runStatus == 1 ? '执行成功' : '执行失败',
+            url: prefix + '/showResult/' + result.data.resultId,
+            // url: prefix + '/showResult/6',
+            skin: 'layui-layer-gray',
+            btn: ['关闭'],
+            yes: function (index, layero) {
+                layer.close(index);
+            }
+        };
+        $.modal.openOptions(options);
+    }
+</script>
+</body>
+</html>

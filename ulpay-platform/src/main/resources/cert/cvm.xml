@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="GB2312"?>
+<CVMConfig>
+	<CRLContext>
+		<RetryPolicy>0</RetryPolicy>
+		<!--RetryPolicy，下载CRL失败时的重试间隔策略，以“,”分隔，单位为秒-->
+		<NotCheckCRL>true</NotCheckCRL>
+		<!--若NotCheckCRL设置为true，则将不检查CRL是否由指定CA所颁发-->
+		<CrlUrl>
+			http://topca.itrus.com.cn/public/itruscrl?CA=72D69E4246D869045EEBA63BF444873B5C1C38E8
+		</CrlUrl>
+		<!--若不设置<CrlUrl>，则从用户证书的CRL颁发点下载CRL-->
+		<CaFileName>cafiles/ulpay-gw.cer</CaFileName>
+		<!--CaFileName，用户上级CA的证书文件-->
+		<!-- cafiles中还需要一个与CaFileName中配置的正式同名的CRL证书 -->
+	</CRLContext>
+</CVMConfig>

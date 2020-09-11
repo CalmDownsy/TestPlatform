@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ulpay.testplatform.mapper.TestCertManagementMapper">
+    
+    <resultMap type="com.ulpay.testplatform.domain.TestCertManagement" id="TestCertManagementResult">
+        <result property="id"    column="id"    />
+        <result property="certFilename"    column="cert_filename"    />
+        <result property="certPass"    column="cert_pass"    />
+        <result property="certFilepath"    column="cert_filepath"    />
+        <result property="certType"    column="cert_type"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectTestCertManagementVo">
+        select id, cert_filename, cert_pass, cert_filepath, cert_type, create_by, create_time, update_by, update_time, remark from test_cert_management
+    </sql>
+
+    <select id="selectTestCertManagementList" parameterType="com.ulpay.testplatform.domain.TestCertManagement" resultMap="TestCertManagementResult">
+        <include refid="selectTestCertManagementVo"/>
+        <where>  
+            <if test="certFilename != null  and certFilename != ''"> and cert_filename like concat('%', #{certFilename}, '%')</if>
+            <if test="certType != null  and certType != ''"> and cert_type = #{certType}</if>
+        </where>
+    </select>
+    
+    <select id="selectTestCertManagementById" parameterType="Integer" resultMap="TestCertManagementResult">
+        <include refid="selectTestCertManagementVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectTestCertManagementByName" parameterType="String" resultMap="TestCertManagementResult">
+        <include refid="selectTestCertManagementVo"/>
+        where  cert_filename = #{certFilename}
+    </select>
+        
+    <insert id="insertTestCertManagement" parameterType="com.ulpay.testplatform.domain.TestCertManagement" useGeneratedKeys="true" keyProperty="id">
+        insert into test_cert_management
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="certFilename != null  and certFilename != ''">cert_filename,</if>
+            <if test="certPass != null  and certPass != ''">cert_pass,</if>
+            <if test="certFilepath != null  and certFilepath != ''">cert_filepath,</if>
+            <if test="certType != null  and certType != ''">cert_type,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="certFilename != null  and certFilename != ''">#{certFilename},</if>
+            <if test="certPass != null  and certPass != ''">#{certPass},</if>
+            <if test="certFilepath != null  and certFilepath != ''">#{certFilepath},</if>
+            <if test="certType != null  and certType != ''">#{certType},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTestCertManagement" parameterType="com.ulpay.testplatform.domain.TestCertManagement">
+        update test_cert_management
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="certFilename != null  and certFilename != ''">cert_filename = #{certFilename},</if>
+            <if test="certPass != null  and certPass != ''">cert_pass = #{certPass},</if>
+            <if test="certFilepath != null  and certFilepath != ''">cert_filepath = #{certFilepath},</if>
+            <if test="certType != null  and certType != ''">cert_type = #{certType},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTestCertManagementById" parameterType="Integer">
+        delete from test_cert_management where id = #{id}
+    </delete>
+
+    <delete id="deleteTestCertManagementByIds" parameterType="String">
+        delete from test_cert_management where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

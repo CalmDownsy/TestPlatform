@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('工单趋势')"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="report-form">
+                <div class="select-list">
+                    <ul>
+                        <li class="select-time">
+                        <li class="select-time">
+                            <label>上线时间： </label>
+                            <input type="text" class="time-input" id="startTime" placeholder="开始时间"
+                                   name="params[beginTime]"/>
+                            <span>-</span>
+                            <input type="text" class="time-input" id="endTime" placeholder="结束时间"
+                                   name="params[endTime]"/>
+                        </li>
+                        </li>
+                        <li>
+                            业务线：<select id="busiLine" name="busiLine" th:with="type=${@dict.getType('busi_line')}">
+                            <option value="">请选择</option>
+                            <option th:each="dict : ${type}" th:text="${dict.dictLabel}"
+                                    th:value="${dict.dictValue}"></option>
+                        </select>
+                        </li>
+                        <li>
+                            工单类型：<select id="workOrderType" name="workOrderType"
+                                         th:with="type=${@dict.getType('test_workorder_type')}">
+                            <option value="">请选择</option>
+                            <option th:each="dict : ${type}" th:text="${dict.dictLabel}"
+                                    th:value="${dict.dictValue}"></option>
+                        </select>
+                        </li>
+                        <li>
+                            <!-- bootstrap表单会自动刷新页面，所以不使用button，使用a -->
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="selectReportData2()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-sm-12 select-table">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="panel panel-danger">
+                        <div class="panel-heading">
+                            <!-- BG工单占比-->
+                        </div>
+                        <div class="panel-body">
+                            <h2 align="center" id="tips">
+                                请选择查询条件
+                            </h2>
+                            <div class="echarts" id="echarts-detail-chart" style="height: calc(100vh - 160px)"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: echarts-js"/>
+<script th:inline="javascript">
+    var prefix = ctx + "testplatform/workorder/";
+
+    function selectReportData2() {
+        getReportData2();
+        // console.log("reportData:" + JSON.stringify(reportData));
+    }
+
+    function getReportData2() {
+        var beginTime = $("#startTime").val();
+        var endTime = $("#endTime").val();
+        var busiLine = $("#busiLine").val();
+        var workOrderType = $("#workOrderType").val();
+        if ($.common.isEmpty(workOrderType)) {
+            $.modal.alertWarning("请选择工单类型");
+            return
+        }
+        if ($.common.isEmpty(beginTime) || $.common.isEmpty(endTime)) {
+            $.modal.alertWarning("请选择时间范围");
+            return
+        }
+
+        // if ($.common.isEmpty(busiLine)) {
+        //     $.modal.alertWarning("请选择业务线");
+        //     return
+        // }
+        $.ajax({
+            type: "post",
+            dataType: "json",
+            url: prefix + "/selectWorkOrderRend",
+            data: {
+                "beginTime": beginTime,
+                "endTime": endTime,
+                "busiLine": busiLine,
+                "workOrderType": workOrderType
+            },
+            // 防止异步重复刷新页面
+            async: false,
+            error: function () {
+                $.modal.alertError("系统错误");
+            },
+            success: function (result) {
+                if (result.code == web_status.SUCCESS) {
+                    $("#tips").attr("hidden", "hidden");
+                    // $("#echarts-bg-chart").removeAttr("hidden");
+                    console.log("reportData:" + JSON.stringify(result.data));
+                    getOptions2(result.data);
+                } else {
+                    $.modal.alertError(result.msg);
+                }
+            }
+        });
+    }
+
+    var lineChart = echarts.init(document.getElementById("echarts-detail-chart"));
+
+    function getOptions2(reportData) {
+        var legendData = [];
+        var seriesData = [];
+        var xAxisData = [];
+        for (var i = 0; i < reportData.xAxisData.length; i++) {
+            xAxisData.push(reportData.xAxisData[i] + "周");
+        }
+        for (var p in reportData.series) {
+
+            // console.log("key:" + p + "val: " + reportData.series[p]);
+            legendData.push(p);
+            seriesData.push({
+                name: p, data: reportData.series[p], type: "line"
+            });
+        }
+        var lineoption = {
+            title: {
+                text: reportData.titleText,
+            },
+            tooltip: {
+                trigger: 'axis'
+            },
+            legend: {
+                data: legendData,
+                // data :['邮件营销', '联盟广告', '视频广告', '直接访问', '搜索引擎']
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            xAxis: {
+                type: 'category',
+                boundaryGap: false,
+                data: xAxisData
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: seriesData
+            // [
+            //     {
+            //         name: '搜索引擎',
+            //         type: 'line',
+            //         data: [820, 932, 901, 934, 1290, 1330, 1320]
+            //     }
+            // ]
+        };
+        console.log("options:" + JSON.stringify(lineoption));
+        lineChart.setOption(lineoption);
+        $(window).resize(lineChart.resize);
+    }
+
+</script>
+</body>
+</html>

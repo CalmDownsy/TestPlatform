@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('新增测试报告')" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-testreport-add">
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">测试集Id：</label>
+                <div class="col-sm-8">
+                    <input name="caseboxId" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">测试集名称：</label>
+                <div class="col-sm-8">
+                    <input name="caseboxName" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">用例数量：</label>
+                <div class="col-sm-8">
+                    <input name="caseNum" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">成功数量：</label>
+                <div class="col-sm-8">
+                    <input name="successNum" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">失败数量：</label>
+                <div class="col-sm-8">
+                    <input name="failNum" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">跳过数量：</label>
+                <div class="col-sm-8">
+                    <input name="skipNum" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">异常数量：</label>
+                <div class="col-sm-8">
+                    <input name="excepNum" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">Y完成，N未完成：</label>
+                <div class="col-sm-8">
+                    <input name="finishFlag" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">执行详情，展示报告使用：</label>
+                <div class="col-sm-8">
+                    <input name="resultDetails" class="form-control" type="text" required>
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script type="text/javascript">
+        var prefix = ctx + "testplatform/testreport"
+        $("#form-testreport-add").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/add", $('#form-testreport-add').serialize());
+            }
+        }
+    </script>
+</body>
+</html>

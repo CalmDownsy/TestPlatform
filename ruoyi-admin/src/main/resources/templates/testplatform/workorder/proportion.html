@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('工单占比')"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="report-form">
+                <div class="select-list">
+                    <ul>
+                        <li class="select-time">
+                        <li class="select-time">
+                            <label>上线时间： </label>
+                            <input type="text" class="time-input" id="startTime" placeholder="开始时间" name="params[beginTime]"/>
+                            <span>-</span>
+                            <input type="text" class="time-input" id="endTime" placeholder="结束时间" name="params[endTime]"/>
+                        </li>
+                        </li>
+                        <li>
+                            业务线：<select id="busiLine" name="busiLine" th:with="type=${@dict.getType('busi_line')}">
+                            <option value="">请选择</option>
+                            <option th:each="dict : ${type}" th:text="${dict.dictLabel}"
+                                    th:value="${dict.dictValue}"></option>
+                        </select>
+                        </li>
+                        <li>
+                            工单类型：<select id="workOrderType" name="workOrderType" th:with="type=${@dict.getType('test_workorder_type')}">
+                            <option value="">请选择</option>
+                            <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                        </select>
+                        </li>
+                        <li>
+                            <!-- bootstrap表单会自动刷新页面，所以不使用button，使用a -->
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="selectReportData()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-sm-12 select-table">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="panel panel-danger">
+                        <div class="panel-heading">
+<!--                            BG工单占比-->
+                        </div>
+                        <div class="panel-body">
+                            <h2 align="center" id="tips">
+                                请选择查询条件
+                            </h2>
+                            <div class="echarts" id="echarts-bg-chart" style="height: calc(100vh - 160px)"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <th:block th:include="include :: footer"/>
+    <th:block th:include="include :: echarts-js"/>
+    <script th:inline="javascript">
+        var prefix = ctx + "testplatform/workorder/";
+
+        function selectReportData() {
+            getReportData();
+            // console.log("reportData:" + JSON.stringify(reportData));
+        }
+
+        function getReportData() {
+            var beginTime = $("#startTime").val();
+            var endTime = $("#endTime").val();
+            var busiLine = $("#busiLine").val();
+            var workOrderType = $("#workOrderType").val();
+            if ($.common.isEmpty(workOrderType)) {
+                $.modal.alertWarning("请选择工单类型");
+                return
+            }
+            if ($.common.isEmpty(beginTime) || $.common.isEmpty(endTime)) {
+                $.modal.alertWarning("请选择时间范围");
+                return
+            }
+            $.ajax({
+                type: "post",
+                dataType: "json",
+                url: prefix + "/selectWorkOrderProportion",
+                data: {
+                    "beginTime": beginTime,
+                    "endTime": endTime,
+                    "busiLine": busiLine,
+                    "workOrderType": workOrderType
+                },
+                // 防止异步重复刷新页面
+                async: false,
+                error: function () {
+                    $.modal.alertError("系统错误");
+                },
+                success: function (result) {
+                    if (result.code == web_status.SUCCESS) {
+                        $("#tips").attr("hidden", "hidden");
+                        // $("#echarts-bg-chart").removeAttr("hidden");
+                        // console.log("reportData:" + JSON.stringify(result.data));
+                        getOptions(result.data);
+                    } else {
+                        $.modal.alertError(result.msg);
+                    }
+                }
+            });
+        }
+
+        var bgChart = echarts.init(document.getElementById("echarts-bg-chart"));
+        function getOptions(reportData) {
+            var legendData = [];
+            var seriesData = [];
+            for (var p in reportData.seriesData) {
+                // console.log("key:" + p + "val: " + reportData.seriesData[p]);
+                legendData.push(p);
+                seriesData.push({name: p, value: reportData.seriesData[p]});
+            }
+
+            var bgoption = {
+                title: {
+                    text: reportData.titleText,
+                    // subtext: '纯属虚构',
+                    x: 'center'
+                },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: "{b} : {c} ({d}%)"
+                },
+                legend: {
+                    orient: 'vertical',
+                    x: 'left',
+                    data: legendData
+                },
+                calculable: true,
+                series: [
+                    {
+                        // name: '',
+                        type: 'pie',
+                        // 半径
+                        radius: '80%',
+                        center: ['50%', '50%'],
+                        data: seriesData
+                        //     [
+                        //     {value: 335, name: '直接访问'},
+                        //     {value: 310, name: '邮件营销'},
+                        //     {value: 234, name: '联盟广告'},
+                        //     {value: 135, name: '视频广告'},
+                        //     {value: 1548, name: '搜索引擎'}
+                        // ]
+                    }
+                ]
+            };
+            bgChart.setOption(bgoption);
+            $(window).resize(bgChart.resize);
+        }
+
+    </script>
+</body>
+</html>

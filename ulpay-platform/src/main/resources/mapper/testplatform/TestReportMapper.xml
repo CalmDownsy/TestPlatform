@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ulpay.testplatform.mapper.TestReportMapper">
+    
+    <resultMap type="com.ulpay.testplatform.domain.TestReport" id="TestReportResult">
+        <result property="reportId"    column="report_id"    />
+        <result property="caseboxId"    column="casebox_id"    />
+        <result property="caseboxName"    column="casebox_name"    />
+        <result property="caseNum"    column="case_num"    />
+        <result property="successNum"    column="success_num"    />
+        <result property="failNum"    column="fail_num"    />
+        <result property="skipNum"    column="skip_num"    />
+        <result property="excepNum"    column="excep_num"    />
+        <result property="finishFlag"    column="finish_flag"    />
+        <result property="resultDetails"    column="result_details"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectTestReportVo">
+        select report_id, casebox_id, casebox_name, case_num, success_num, fail_num, skip_num, excep_num, finish_flag, result_details, create_by, create_time, update_by, update_time from test_report
+    </sql>
+
+    <select id="selectTestReportList" parameterType="com.ulpay.testplatform.domain.TestReport" resultMap="TestReportResult">
+        <include refid="selectTestReportVo"/>
+        <where>  
+            <if test="caseboxId != null "> and casebox_id = #{caseboxId}</if>
+            <if test="caseboxName != null  and caseboxName != ''"> and casebox_name like concat('%', #{caseboxName}, '%')</if>
+            <if test="finishFlag != null  and finishFlag != ''"> and finish_flag = #{finishFlag}</if>
+            <if test="createBy != null  and createBy != ''"> and create_by = #{createBy}</if>
+            <if test="createTime != null "> and create_time = #{createTime}</if>
+            <if test="updateBy != null  and updateBy != ''"> and update_by = #{updateBy}</if>
+            <if test="updateTime != null "> and update_time = #{updateTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectTestReportById" parameterType="Long" resultMap="TestReportResult">
+        <include refid="selectTestReportVo"/>
+        where report_id = #{reportId}
+    </select>
+        
+    <insert id="insertTestReport" parameterType="com.ulpay.testplatform.domain.TestReport" useGeneratedKeys="true" keyProperty="reportId">
+        insert into test_report
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="caseboxId != null ">casebox_id,</if>
+            <if test="caseboxName != null  and caseboxName != ''">casebox_name,</if>
+            <if test="caseNum != null ">case_num,</if>
+            <if test="successNum != null ">success_num,</if>
+            <if test="failNum != null ">fail_num,</if>
+            <if test="skipNum != null ">skip_num,</if>
+            <if test="excepNum != null ">excep_num,</if>
+            <if test="finishFlag != null  and finishFlag != ''">finish_flag,</if>
+            <if test="resultDetails != null  and resultDetails != ''">result_details,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="reportId != null ">#{reportId},</if>
+            <if test="caseboxId != null ">#{caseboxId},</if>
+            <if test="caseboxName != null  and caseboxName != ''">#{caseboxName},</if>
+            <if test="caseNum != null ">#{caseNum},</if>
+            <if test="successNum != null ">#{successNum},</if>
+            <if test="failNum != null ">#{failNum},</if>
+            <if test="skipNum != null ">#{skipNum},</if>
+            <if test="excepNum != null ">#{excepNum},</if>
+            <if test="finishFlag != null  and finishFlag != ''">#{finishFlag},</if>
+            <if test="resultDetails != null  and resultDetails != ''">#{resultDetails},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTestReport" parameterType="com.ulpay.testplatform.domain.TestReport">
+        update test_report
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="caseboxId != null ">casebox_id = #{caseboxId},</if>
+            <if test="caseboxName != null  and caseboxName != ''">casebox_name = #{caseboxName},</if>
+            <if test="caseNum != null ">case_num = #{caseNum},</if>
+            <if test="successNum != null ">success_num = #{successNum},</if>
+            <if test="failNum != null ">fail_num = #{failNum},</if>
+            <if test="skipNum != null ">skip_num = #{skipNum},</if>
+            <if test="excepNum != null ">excep_num = #{excepNum},</if>
+            <if test="finishFlag != null  and finishFlag != ''">finish_flag = #{finishFlag},</if>
+            <if test="resultDetails != null  and resultDetails != ''">result_details = #{resultDetails},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+        </trim>
+        where report_id = #{reportId}
+    </update>
+
+    <delete id="deleteTestReportById" parameterType="Long">
+        delete from test_report where report_id = #{reportId}
+    </delete>
+
+    <delete id="deleteTestReportByIds" parameterType="String">
+        delete from test_report where report_id in 
+        <foreach item="reportId" collection="array" open="(" separator="," close=")">
+            #{reportId}
+        </foreach>
+    </delete>
+    
+</mapper>

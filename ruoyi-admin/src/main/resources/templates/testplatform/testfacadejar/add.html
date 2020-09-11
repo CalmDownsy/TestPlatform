@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('新增Facade包管理')" />
+    <th:block th:include="include :: datetimepicker-css"/>
+    <th:block th:include="include :: jasny-bootstrap-css"/>
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-testfacadejar-add">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Facade文件：</label>
+            <div class="col-sm-8">
+                <div class="fileinput fileinput-new input-group" data-provides="fileinput">
+                    <div class="form-control" data-trigger="fileinput"><i
+                            class="glyphicon glyphicon-file fileinput-exists"></i> <span
+                            class="fileinput-filename" id="facadeName" name="facadeName"></span></div>
+                    <span class="input-group-addon btn btn-white btn-file"><span class="fileinput-new">选择文件</span><span
+                            class="fileinput-exists">更改</span><input type="file" name="facadeFile" id="facadeFile" required></span>
+                    <a href="#" class="input-group-addon btn btn-white fileinput-exists" data-dismiss="fileinput">清除</a>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">所属应用：</label>
+            <div class="col-sm-8">
+                <input name="appName" id="appName" class="form-control" type="text" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">备注：</label>
+            <div class="col-sm-8">
+                <textarea id="remark" name="remark" maxlength="500" class="form-control" rows="3"></textarea>
+            </div>
+        </div>
+    </form>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: datetimepicker-js"/>
+<th:block th:include="include :: jasny-bootstrap-js"/>
+<script type="text/javascript">
+    var prefix = ctx + "testplatform/testfacadejar";
+    $("#form-testfacadejar-add").validate({
+        focusCleanup: true
+    });
+
+    function add(){
+        var formData = new FormData();
+        formData.append("facadeFile", $('#facadeFile')[0].files[0]);
+        formData.append("appName", $("#appName").val());
+        formData.append("remark", $("#remark").val());
+        $.ajax({
+            cache: true,
+            type: "post",
+            url: prefix + "/add",
+            data: formData,
+            async: false,
+            processData: false, //数据不做处理
+            contentType: false, //不设置c-t
+            beforeSend: function () {
+                $.modal.loading("正在处理中，请稍后...");
+                $.modal.disable();
+            },
+            error: function () {
+                $.modal.alertError("系统错误");
+            },
+            success: function (response) {
+                $.operate.successCallback(response);
+            }
+        });
+    }
+
+    function submitHandler() {
+        if ($.validate.form()) {
+            var facadeName = $("#facadeName").text();
+            add();
+            // $.ajax({
+            //     url : prefix+"/query/"+certName,
+            //     success: function (data) {
+            //         if( date.msg == "1" ){
+            //             layer.confirm("当前证书名称已被使用，确认继续将更新服务器端同名证书。",{
+            //                 icon: 3,
+            //                 title: "系统提示",
+            //                 btn: ['确认', '取消']
+            //             },function(index){
+            //                 add();
+            //                 layer.close(index);
+            //             })
+            //         } else {
+            //             add();
+            //         }
+            //     },
+            //     error : function (){
+            //         $.modal.alertError("系统错误");
+            //     }
+            // });
+        }
+    }
+</script>
+</body>
+</html>

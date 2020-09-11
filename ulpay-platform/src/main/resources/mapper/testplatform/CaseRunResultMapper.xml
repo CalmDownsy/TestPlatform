@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ulpay.testplatform.mapper.CaseRunResultMapper">
+    
+    <resultMap type="com.ulpay.testplatform.domain.CaseRunResult" id="CaseRunResultResult">
+        <result property="resultId"    column="result_id"    />
+        <result property="caseId"    column="case_id"    />
+        <result property="requestType"    column="request_type"    />
+        <result property="requestUrl"    column="request_url"    />
+        <result property="messageType"    column="message_type"    />
+        <result property="requestMsg"    column="request_msg"    />
+        <result property="responseMsg"    column="response_msg"    />
+        <result property="consumingTime"    column="consuming_time"    />
+        <result property="runStatus"    column="run_status"    />
+        <result property="resultMsg"    column="result_msg"    />
+        <result property="envConf"    column="env_conf"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectCaseRunResultVo">
+        select result_id, case_id, request_type, request_url, message_type, request_msg, response_msg, consuming_time, run_status, result_msg, env_conf, create_by, create_time, update_by, update_time, remark from case_run_result
+    </sql>
+
+    <select id="selectCaseRunResultList" parameterType="com.ulpay.testplatform.domain.CaseRunResult" resultMap="CaseRunResultResult">
+        <include refid="selectCaseRunResultVo"/>
+        <where>  
+            <if test="caseId != null "> and case_id = #{caseId}</if>
+            <if test="requestType != null  and requestType != ''"> and request_type = #{requestType}</if>
+            <if test="requestUrl != null  and requestUrl != ''"> and request_url = #{requestUrl}</if>
+            <if test="messageType != null  and messageType != ''"> and message_type = #{messageType}</if>
+            <if test="requestMsg != null  and requestMsg != ''"> and request_msg = #{requestMsg}</if>
+            <if test="responseMsg != null  and responseMsg != ''"> and response_msg = #{responseMsg}</if>
+            <if test="consumingTime != null "> and consuming_time = #{consumingTime}</if>
+            <if test="runStatus != null  and runStatus != ''"> and run_status = #{runStatus}</if>
+            <if test="envConf != null  and envConf != ''"> and env_conf = #{envConf}</if>
+        </where>
+    </select>
+    
+    <select id="selectCaseRunResultById" parameterType="Long" resultMap="CaseRunResultResult">
+        <include refid="selectCaseRunResultVo"/>
+        where result_id = #{resultId}
+    </select>
+
+    <select id="selectResultByReportId" parameterType="Long" resultMap="CaseRunResultResult">
+        <include refid="selectCaseRunResultVo"/>
+        where report_id = #{reportId}
+    </select>
+        
+    <insert id="insertCaseRunResult" parameterType="com.ulpay.testplatform.domain.CaseRunResult" useGeneratedKeys="true" keyProperty="resultId">
+        insert into case_run_result
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="caseId != null ">case_id,</if>
+            <if test="reportId != null ">report_id,</if>
+            <if test="requestType != null  and requestType != ''">request_type,</if>
+            <if test="requestUrl != null  and requestUrl != ''">request_url,</if>
+            <if test="messageType != null  and messageType != ''">message_type,</if>
+            <if test="requestMsg != null  and requestMsg != ''">request_msg,</if>
+            <if test="responseMsg != null  and responseMsg != ''">response_msg,</if>
+            <if test="consumingTime != null ">consuming_time,</if>
+            <if test="runStatus != null  and runStatus != ''">run_status,</if>
+            <if test="resultMsg != null  and resultMsg != ''">result_msg,</if>
+            <if test="envConf != null  and envConf != ''">env_conf,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="caseId != null ">#{caseId},</if>
+            <if test="reportId != null ">#{reportId},</if>
+            <if test="requestType != null  and requestType != ''">#{requestType},</if>
+            <if test="requestUrl != null  and requestUrl != ''">#{requestUrl},</if>
+            <if test="messageType != null  and messageType != ''">#{messageType},</if>
+            <if test="requestMsg != null  and requestMsg != ''">#{requestMsg},</if>
+            <if test="responseMsg != null  and responseMsg != ''">#{responseMsg},</if>
+            <if test="consumingTime != null ">#{consumingTime},</if>
+            <if test="runStatus != null  and runStatus != ''">#{runStatus},</if>
+            <if test="resultMsg != null  and resultMsg != ''">#{resultMsg},</if>
+            <if test="envConf != null  and envConf != ''">#{envConf},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCaseRunResult" parameterType="com.ulpay.testplatform.domain.CaseRunResult">
+        update case_run_result
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="caseId != null ">case_id = #{caseId},</if>
+            <if test="reportId != null ">report_id = #{reportId},</if>
+            <if test="requestType != null  and requestType != ''">request_type = #{requestType},</if>
+            <if test="requestUrl != null  and requestUrl != ''">request_url = #{requestUrl},</if>
+            <if test="messageType != null  and messageType != ''">message_type = #{messageType},</if>
+            <if test="requestMsg != null  and requestMsg != ''">request_msg = #{requestMsg},</if>
+            <if test="responseMsg != null  and responseMsg != ''">response_msg = #{responseMsg},</if>
+            <if test="consumingTime != null ">consuming_time = #{consumingTime},</if>
+            <if test="runStatus != null  and runStatus != ''">run_status = #{runStatus},</if>
+            <if test="resultMsg != null  and resultMsg != ''">result_msg = #{resultMsg},</if>
+            <if test="envConf != null  and envConf != ''">env_conf = #{envConf},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+        </trim>
+        where result_id = #{resultId}
+    </update>
+
+    <delete id="deleteCaseRunResultById" parameterType="Long">
+        delete from case_run_result where result_id = #{resultId}
+    </delete>
+
+    <delete id="deleteCaseRunResultByIds" parameterType="String">
+        delete from case_run_result where result_id in 
+        <foreach item="resultId" collection="array" open="(" separator="," close=")">
+            #{resultId}
+        </foreach>
+    </delete>
+    
+</mapper>

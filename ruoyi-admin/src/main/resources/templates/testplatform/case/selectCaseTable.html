@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('表格传值给父页面')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+		<div class="row">
+			<div class="col-sm-12 search-collapse" style="display: none;">
+				<form id="formId">
+					<div class="select-list">
+						<ul>
+							<li>
+								<p>用例名称：</p>
+								<input type="text" name="caseName"/>
+							</li>
+							<li>
+								<p>所属接口：</p>
+								<input type="text" name="interfaceId"/>
+							</li>
+							<li>
+								<p>用例类型：</p>
+								<select name="caseType" th:with="type=${@dict.getType('test_case_type')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}"
+											th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li>
+								<p>用例状态：</p>
+								<select name="status" th:with="type=${@dict.getType('status')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}"
+											th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li>
+								<p>所属环境：</p>
+								<select name="env" th:with="type=${@dict.getType('test_env')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}"
+											th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li class="select-time">
+								<p>创建时间：</p>
+								<input type="text" class="time-input" id="startTime" placeholder="开始时间"
+									   name="params[beginCreateTime]"/>
+								<span>-</span>
+								<input type="text" class="time-input" id="endTime" placeholder="结束时间"
+									   name="params[endCreateTime]"/>
+							</li>
+							<li>
+								<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i
+										class="fa fa-search"></i>&nbsp;搜索</a>
+								<a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i
+										class="fa fa-refresh"></i>&nbsp;重置</a>
+							</li>
+						</ul>
+					</div>
+				</form>
+			</div>
+			<div class="col-sm-12 select-table table-striped">
+				<table id="bootstrap-table" data-mobile-responsive="true"></table>
+			</div>
+		</div>
+	</div>
+    <div th:include="include :: footer"></div>
+    <script th:inline="javascript">
+        var prefix = ctx + "testplatform/case";
+        var statusDatas = [[${@dict.getType('status')}]];
+        var caseTypeDatas = [[${@dict.getType('test_case_type')}]];
+        var envDatas = [[${@dict.getType('test_env')}]];
+
+        function selectInterfaceById(interfaceId) {
+            var interfaceName = '';
+            $.ajax({
+                url: ctx + 'testplatform/interface/selectById/' + interfaceId,
+                type: 'get',
+                async: false,
+                success: function (resp) {
+                    if (null == resp) {
+                        return;
+                    }
+                    interfaceName = resp.interfaceName;
+                },
+                error: function () {
+                    $.modal.alertError('系统异常');
+                }
+            });
+            return interfaceName;
+        }
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+		        showSearch: true,
+		        showRefresh: false,
+		        showToggle: false,
+		        showColumns: false,
+                queryParams: {
+                    //只展示状态正常的用例
+                    status: 1
+                },
+                columns: [{
+		            checkbox: true
+		        }, {
+                    field: 'caseId',
+                    title: '用例Id',
+                    visible: false
+                },
+				{
+					field : 'caseName',
+					title : '用例名称'
+				},
+				{
+					field : 'interfaceId',
+					title : '所属接口',
+                    formatter: function (value, row, index) {
+                        //待优化 查询次数太多
+                        return (selectInterfaceById(value));
+                    }
+				},
+				{
+					field : 'caseType',
+					title : '用例类型',
+                    formatter: function (value, row, index) {
+                        return $.table.selectDictLabel(caseTypeDatas, value);
+                    }
+				},
+				{
+					field : 'status',
+					title : '用例状态',
+                    formatter: function (value, row, index) {
+                        return $.table.selectDictLabel(statusDatas, value);
+                    }
+				},
+				{
+					field : 'env',
+					title : '所属环境',
+                    formatter: function (value, row, index) {
+                        return $.table.selectDictLabel(envDatas, value);
+                    }
+				},
+				{
+				    field : 'remcark',
+				    title : '备注'
+				}]
+            };
+            $.table.init(options);
+        });
+        
+        /* 选择用例-提交 */
+		function submitHandler(index, layero) {
+			var rows = $.table.selectFirstColumns();
+			var casenames = $.table.selectColumnsByRow(2);
+			if (rows.length == 0) {
+       			$.modal.alertWarning("请至少选择一条记录");
+       			return;
+       		}
+			$.modal.close();
+			// 父页面的方法
+			// parent.selectUsers();
+			// 父页面的变量
+			parent.$('#caseBox').val(rows.join());
+			parent.$('#caseBoxName').val(casenames);
+
+		}
+    </script>
+</body>
+</html>

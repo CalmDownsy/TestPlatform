@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ulpay.testplatform.mapper.TestFacadeJarMapper">
+    
+    <resultMap type="com.ulpay.testplatform.domain.TestFacadeJar" id="TestFacadeJarResult">
+        <result property="id"    column="id"    />
+        <result property="jarName"    column="jar_name"    />
+        <result property="appName"    column="app_name"    />
+        <result property="jarFilepath"    column="jar_filepath"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectTestFacadeJarVo">
+        select id, jar_name, app_name, jar_filepath, create_by, create_time, update_by, update_time, remark from test_facade_jar
+    </sql>
+
+    <select id="selectTestFacadeJarList" parameterType="com.ulpay.testplatform.domain.TestFacadeJar" resultMap="TestFacadeJarResult">
+        <include refid="selectTestFacadeJarVo"/>
+        <where>  
+            <if test="jarName != null  and jarName != ''"> and jar_name like concat('%', #{jarName}, '%')</if>
+            <if test="appName != null  and appName != ''"> and app_name like concat('%', #{appName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectTestFacadeJarById" parameterType="Integer" resultMap="TestFacadeJarResult">
+        <include refid="selectTestFacadeJarVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertTestFacadeJar" parameterType="com.ulpay.testplatform.domain.TestFacadeJar" useGeneratedKeys="true" keyProperty="id">
+        insert into test_facade_jar
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="jarName != null  and jarName != ''">jar_name,</if>
+            <if test="appName != null  and appName != ''">app_name,</if>
+            <if test="jarFilepath != null  and jarFilepath != ''">jar_filepath,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="jarName != null  and jarName != ''">#{jarName},</if>
+            <if test="appName != null  and appName != ''">#{appName},</if>
+            <if test="jarFilepath != null  and jarFilepath != ''">#{jarFilepath},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTestFacadeJar" parameterType="com.ulpay.testplatform.domain.TestFacadeJar">
+        update test_facade_jar
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="jarName != null  and jarName != ''">jar_name = #{jarName},</if>
+            <if test="appName != null  and appName != ''">app_name = #{appName},</if>
+            <if test="jarFilepath != null  and jarFilepath != ''">jar_filepath = #{jarFilepath},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTestFacadeJarById" parameterType="Integer">
+        delete from test_facade_jar where id = #{id}
+    </delete>
+
+    <delete id="deleteTestFacadeJarByIds" parameterType="String">
+        delete from test_facade_jar where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

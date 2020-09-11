@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('修改Mock配置')"/>
+    <th:block th:include="include :: jsoneditor-css" />
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-interfacemock-edit" th:object="${testInterfaceMock}">
+        <input name="mockId" th:field="*{mockId}" type="hidden">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Mock名称：</label>
+            <div class="col-sm-8">
+                <input name="mockName" th:field="*{mockName}" class="form-control" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">所属接口：</label>
+            <div class="col-sm-8">
+                <input name="interfaceId" th:field="*{interfaceId}" class="form-control" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">请求路径：</label>
+            <div class="col-sm-8">
+                <input name="requestUrl" th:field="*{requestUrl}" class="form-control" type="text">
+            </div>
+        </div>
+        <div class="form-group" hidden="hidden">
+            <label class="col-sm-3 control-label">规则集：</label>
+            <div class="col-sm-8">
+                <input name="rulesetJson" class="form-control" type="text" th:field="*{rulesetJson}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">请求参数：</label>
+            <div class="col-sm-8" id="requestParam"></div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">返回结果：</label>
+            <div class="col-sm-8" id="responseMsg"></div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Mock状态：</label>
+            <div class="col-sm-8">
+                <div class="radio-box" th:each="dict : ${@dict.getType('status')}">
+                    <input type="radio" th:id="${'status_' + dict.dictCode}" name="status" th:value="${dict.dictValue}"
+                           th:field="*{status}">
+                    <label th:for="${'status_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: jsoneditor-js" />
+<script type="text/javascript">
+    var prefix = ctx + "testplatform/interfacemock";
+    var options = {
+        mode: 'tree',
+        onError: function (err) {
+            alert(err.toString());
+        }
+    };
+    // 初始化jsoneditor
+    const reqeustEditor = new JSONEditor(document.getElementById('requestParam'), options);
+    const responseEditor = new JSONEditor(document.getElementById('responseMsg'), options);
+
+    // mock的入参和出参
+    var ruleJson = JSON.parse($('#rulesetJson').val());
+    reqeustEditor.set(ruleJson.requestParam);
+    responseEditor.set(ruleJson.responseMsg);
+
+    $("#form-interfacemock-edit").validate({
+        focusCleanup: true
+    });
+
+    function submitHandler() {
+        if ($.validate.form()) {
+            // console.log(reqeustEditor.get());
+            ruleJson.requestParam = reqeustEditor.get();
+            // console.log(responseEditor.get())
+            ruleJson.responseMsg = responseEditor.get();
+            $('#rulesetJson').val(JSON.stringify(ruleJson));
+            $.operate.save(prefix + "/edit", $('#form-interfacemock-edit').serialize());
+        }
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('用例执行结果')" />
+    <th:block th:include="include :: jsonview-css" />
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m-t" id="caseRunResult">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">执行状态：</label>
+            <div class="form-control-static" th:class="${caseRunResult.runStatus == '1' ? 'label label-primary' : 'label label-danger'}" th:text="${caseRunResult.runStatus == '1' ? '成功' : '失败'}">
+            </div>
+        </div>
+        <div class="form-group" th:if="${caseRunResult.requestUrl != null}">
+            <label class="col-sm-2 control-label">请求地址：</label>
+            <div class="form-control-static" th:text="${caseRunResult.requestUrl}">
+            </div>
+        </div>
+        <div class="form-group" th:if="${caseRunResult.resultMsg != null}">
+            <label class="col-sm-2 control-label">执行结果：</label>
+            <div class="form-control-static" th:text="${caseRunResult.resultMsg}">
+            </div>
+        </div>
+        <div class="form-group" th:if="${caseRunResult.requestMsg != null}">
+            <label class="col-sm-2 control-label">请求参数：</label>
+            <div class="form-control-static"><pre id="requestMsg"></pre></div>
+        </div>
+        <div class="form-group" th:if="${caseRunResult.responseMsg != null}">
+            <label class="col-sm-2 control-label">返回参数：</label>
+            <div class="form-control-static"><pre id="responseMsg"></pre></div>
+        </div>
+    </form>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: jsonview-js" />
+<script th:inline="javascript">
+    //json转换
+    $(function() {
+        var requestMsg = [[${caseRunResult.requestMsg}]];
+        if ($.common.isNotEmpty(requestMsg)) {
+            $("#requestMsg").JSONView(requestMsg);
+        } else {
+            $("#requestMsg").text(requestMsg);
+        }
+        var responseMsg = [[${caseRunResult.responseMsg}]];
+        // console.log([[${caseRunResult.resultMsg}]]);
+        if ($.common.isNotEmpty(responseMsg)) {
+            $("#responseMsg").JSONView(responseMsg);
+        } else {
+            $("#responseMsg").text(responseMsg);
+        }
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('用例集执行结果页')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+		 <!--<div class="form-group">-->
+			 <!--<label class="col-sm-2 control-label">用例集名称：</label>-->
+			 <!--<div class="col-sm-8">-->
+				 <!--<input name="boxName" id="boxName" type="text" th:value="${boxName}" />-->
+			 <!--</div>-->
+		 <!--</div>-->
+		 <div class="form-group" hidden="true">
+			 <label class="col-sm-2 control-label">用例集执行结果：</label>
+			 <div class="col-sm-8">
+				 <input name="resultIds" id="resultIds" type="text" th:value="${resultIds}" />
+			 </div>
+		 </div>
+		<div class="row">
+			<div class="col-sm-12 select-table table-striped">
+				<table id="bootstrap-table" data-mobile-responsive="true"></table>
+			</div>
+		</div>
+	</div>
+    <div th:include="include :: footer"></div>
+    <script th:inline="javascript">
+        var prefix = ctx + "testplatform/testcasebox";
+        var datas = [{"dictLabel":"成功","dictValue":"1","listClass":"primary"},{"dictLabel":"失败","dictValue":"2","listClass":"danger"}];
+
+        $(function() {
+            var options = {
+                url: prefix + "/showResult",
+				method: "post",
+                queryParams: {
+                    resultIds : $("#resultIds").val()
+				},
+		        showSearch: false,
+		        showRefresh: false,
+		        showToggle: false,
+		        showColumns: false,
+		        detailView: true,
+		        detailFormatter: detailFormatter,
+                columns: [{
+		            checkbox: false
+		        },
+				{
+					field : 'resultId',
+					title : '用例结果ID'
+				},
+				{
+					field : 'caseId',
+					title : '用例ID'
+				},
+				{
+					field : 'caseName',
+					title : '用例名称'
+				},
+				{
+					field : 'requestUrl',
+					title : '请求地址'
+				},
+				{
+					field : 'runStatus',
+					title : '运行结果',
+					formatter: function(value,row,index){
+					    return $.table.selectDictLabel(datas,value);
+					}
+				},
+				{
+				    field : 'resultMsg',
+				    title : '断言结果'
+				}]
+            };
+            $.table.init(options);
+        });
+        
+        function detailFormatter(index, row) {
+        	var html = [];
+        	$.each(row, function(key, value) {
+        	    if(key == "requestMsg" || key == "responseMsg"){
+                    html.push('<p><b>' + key + ':</b>' + value + '</p>');
+				}
+        	});
+        	return html.join('');
+       	}
+    </script>
+</body>
+</html>

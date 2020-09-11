@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ulpay.testplatform.mapper.TOutbaseConfMapper">
+    
+    <resultMap type="com.ulpay.testplatform.domain.TOutbaseConf" id="TOutbaseConfResult">
+        <result property="baseId"    column="base_id"    />
+        <result property="baseTag"    column="base_tag"    />
+        <result property="baseType"    column="base_type"    />
+        <result property="baseUrl"    column="base_url"    />
+        <result property="basePort"    column="base_port"    />
+        <result property="baseServicename"    column="base_servicename"    />
+        <result property="baseUsername"    column="base_username"    />
+        <result property="basePassword"    column="base_password"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectTOutbaseConfVo">
+        select base_id, base_tag, base_type, base_url, base_port, base_servicename, base_username, base_password, remark from test_outbase_config
+    </sql>
+
+    <select id="selectTOutbaseConfList" parameterType="com.ulpay.testplatform.domain.TOutbaseConf" resultMap="TOutbaseConfResult">
+        <include refid="selectTOutbaseConfVo"/>
+        <where>  
+            <if test="baseTag != null  and baseTag != ''"> and base_tag = #{baseTag}</if>
+            <if test="baseType != null "> and base_type = #{baseType}</if>
+            <if test="baseUrl != null  and baseUrl != ''"> and base_url = #{baseUrl}</if>
+            <if test="basePort != null  and basePort != ''"> and base_port = #{basePort}</if>
+        </where>
+    </select>
+    
+    <select id="selectTOutbaseConfById" parameterType="Long" resultMap="TOutbaseConfResult">
+        <include refid="selectTOutbaseConfVo"/>
+        where base_id = #{baseId}
+    </select>
+        
+    <insert id="insertTOutbaseConf" parameterType="com.ulpay.testplatform.domain.TOutbaseConf" useGeneratedKeys="true" keyProperty="baseId">
+        insert into test_outbase_config
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="baseTag != null  and baseTag != ''">base_tag,</if>
+            <if test="baseType != null ">base_type,</if>
+            <if test="baseUrl != null  and baseUrl != ''">base_url,</if>
+            <if test="basePort != null  and basePort != ''">base_port,</if>
+            <if test="baseServicename != null  and baseServicename != ''">base_servicename,</if>
+            <if test="baseUsername != null  and baseUsername != ''">base_username,</if>
+            <if test="basePassword != null  and basePassword != ''">base_password,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="baseTag != null  and baseTag != ''">#{baseTag},</if>
+            <if test="baseType != null ">#{baseType},</if>
+            <if test="baseUrl != null  and baseUrl != ''">#{baseUrl},</if>
+            <if test="basePort != null  and basePort != ''">#{basePort},</if>
+            <if test="baseServicename != null  and baseServicename != ''">#{baseServicename},</if>
+            <if test="baseUsername != null  and baseUsername != ''">#{baseUsername},</if>
+            <if test="basePassword != null  and basePassword != ''">#{basePassword},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTOutbaseConf" parameterType="com.ulpay.testplatform.domain.TOutbaseConf">
+        update test_outbase_config
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="baseTag != null  and baseTag != ''">base_tag = #{baseTag},</if>
+            <if test="baseType != null ">base_type = #{baseType},</if>
+            <if test="baseUrl != null  and baseUrl != ''">base_url = #{baseUrl},</if>
+            <if test="basePort != null  and basePort != ''">base_port = #{basePort},</if>
+            <if test="baseServicename != null  and baseServicename != ''">base_servicename = #{baseServicename},</if>
+            <if test="baseUsername != null  and baseUsername != ''">base_username = #{baseUsername},</if>
+            <if test="basePassword != null  and basePassword != ''">base_password = #{basePassword},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+        </trim>
+        where base_id = #{baseId}
+    </update>
+
+    <delete id="deleteTOutbaseConfById" parameterType="Long">
+        delete from test_outbase_config where base_id = #{baseId}
+    </delete>
+
+    <delete id="deleteTOutbaseConfByIds" parameterType="String">
+        delete from test_outbase_config where base_id in 
+        <foreach item="baseId" collection="array" open="(" separator="," close=")">
+            #{baseId}
+        </foreach>
+    </delete>
+    
+</mapper>

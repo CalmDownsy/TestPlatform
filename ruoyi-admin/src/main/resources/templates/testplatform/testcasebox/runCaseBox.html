@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('执行用例集')"/>
+    <th:block th:include="include :: select2-css"/>
+    <th:block th:include="include :: bootstrap-select-css"/>
+</head>
+<body>
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-case-run" th:object="${testCaseBox}">
+        <input name="id" id="id" th:field="*{id}" type="hidden">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">用例集名称：</label>
+            <div class="col-sm-7">
+                <input name="boxName" th:field="*{boxName}" class="form-control" type="text" readonly="true">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">用例集执行环境：</label>
+            <div class="col-sm-7">
+                <select class="form-control" name="runEnv" id="runEnv" th:with="type=${@dict.getType('env_flag')}">
+                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"
+                            th:selected="${dict.default}"></option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group" hidden="true">
+            <label class="col-sm-3 control-label">包含的用例：</label>
+            <div class="col-sm-7">
+                <input name="caseBox" id="caseBox" th:value="*{caseBox}" class="form-control" type="text"
+                       readonly="true">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">包含的用例：</label>
+            <div class="col-sm-7">
+                <table id="caseTable" class="table">
+                    <thead>
+                    <tr>
+                        <th>用例ID</th>
+                        <th>用例名称</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </form>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: select2-js"/>
+<th:block th:include="include :: bootstrap-select-js"/>
+<script th:inline="javascript">
+    var prefix = ctx + 'testplatform/testcasebox';
+
+    //添加一行用例
+    var flag = 0;
+    function insertNewRow(){
+        var rowLength = $('#caseTable tr').length;
+        var rowId = "row"+flag;
+        var insertStr = "<tr id="+rowId+">\n" +
+                "<td>\n" +
+                    "<input class='form-control' type='text' readonly='true' />\n" +
+                "</td>\n" +
+                "<td>\n" +
+                    "<input class='form-control' type='text' readonly='true' />\n" +
+                "</td>\n" +
+            "</tr>";
+        $("#caseTable tr:eq("+((rowLength-1))+")").after(insertStr);
+        $("#" + rowId + " td:eq(0)").children().eq(0).attr("id", "caseId" + flag);
+        $("#" + rowId + " td:eq(1)").children().eq(0).attr("id", "caseName" + flag);
+        $("#" + rowId + " td:eq(2)").children().eq(0).attr("id", "preActionId" + flag);
+        flag++;
+    }
+
+    //将用例集中的用例展示到执行界面
+    function showCase(){
+        var caseJsonArray = JSON.parse($('#caseBox').val());
+        for(var i = 0 ; i < caseJsonArray.length ; i++){
+            insertNewRow();
+            var rowId = "row"+i;
+            $("#" + rowId + " td:eq(0)").children().eq(0).val(caseJsonArray[i].caseId);
+            $("#" + rowId + " td:eq(1)").children().eq(0).val(caseJsonArray[i].caseName);
+        }
+    }
+
+//    function covertToJson(){
+//        var caseJsonArray = [];
+//        var rowLength = $('#caseTable tr').length;
+//        for (var i = 1; i < rowLength; i++) {
+//            var paramJson = {};
+//            const row = document.getElementById('caseTable').rows[i];
+//            paramJson.caseId = $(row.cells[0]).children().eq(0).val();
+//            paramJson.caseName = $(row.cells[1]).children().eq(0).val();
+//            paramJson.preActionId = $(row.cells[2]).children().eq(0).val();
+//            caseJsonArray.push(paramJson);
+//        }
+//        $('#caseBox').attr("value",JSON.stringify(caseJsonArray));
+//    }
+
+    //提交表单
+    function submitHandler() {
+        if ($.validate.form()) {
+            // alert($('#envList').val());
+            $.modal.confirm("确认执行此用例吗?", function () {
+//                covertToJson();
+                runCaseBox();
+            });
+        }
+    }
+
+
+    //执行用例
+    function runCaseBox() {
+        var config = {
+            url: prefix + '/runCaseBox/' + $('#id').val() +'/'+$("#runEnv").val(),
+            type: 'get',
+            <!--data: {-->
+                <!--'id': $('#id').val(),-->
+                <!--'runEnv' : $("#runEnv").val()-->
+            <!--},-->
+            beforeSend: function () {
+                $.modal.msgReload("任务正在后台执行中，请稍后在结果页中查看执行状态","success")
+            }
+//            ,
+//            success: function (result) {
+//                if (result.code == web_status.SUCCESS) {
+//                    showRunResult(result);
+//                } else if (result.code == web_status.WARNING) {
+//                    $.modal.alertWarning(result.msg)
+//                } else {
+//                    $.modal.alert("执行完成");
+//                    showRunResult(result);
+//                }
+//                $.modal.closeLoading();
+//            },
+//            error: function () {
+//                $.modal.alertError('系统异常');
+//            }
+        };
+        $.ajax(config);
+    }
+
+    //展示执行结果
+    function showRunResult(result) {
+        var url = prefix + '/showResult/' + result.data.resultIds
+        $.modal.openFull("用例集执行结果页",url);
+    }
+
+    $(function(){
+        showCase();
+    })
+
+</script>
+</body>
+</html>
